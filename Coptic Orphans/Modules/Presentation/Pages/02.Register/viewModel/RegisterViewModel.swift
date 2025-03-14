@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
+import FirebaseAuth
 
 //MARK: - PROTOCOL
 protocol RegisterViewModelProtocol{
@@ -15,6 +16,8 @@ protocol RegisterViewModelProtocol{
     var output: RegisterViewModelOutput { get }
     var input: RegisterViewModelInput { get }
 
+    func signUp(email: String, password: String)
+
 //    func getUsers()
 }
 
@@ -22,12 +25,13 @@ protocol RegisterViewModelProtocol{
 struct RegisterViewModelOutput {
     let isLoading: PassthroughSubject<Bool, Never> = .init()
     let reloadView: PassthroughSubject<Void, Never> = .init()
-    let showToast: PassthroughSubject<Void, Never> = .init()
+    let showToast: PassthroughSubject<String, Never> = .init()
 }
 
 //MARK: - ViewModel-Input
 struct RegisterViewModelInput {
-    let registerButtonTriggered = PassthroughSubject<Void, Never>()
+    let registerButtonTriggered = PassthroughSubject<(String?, String?), Never>()
+    let navToHomeButtonTriggered = PassthroughSubject<Void, Never>()
     let loginButtonTriggered = PassthroughSubject<Void, Never>()
 }
 
@@ -61,7 +65,14 @@ class RegisterViewModel: RegisterViewModelProtocol {
 private extension RegisterViewModel {
     func configureInputObservers() {
         input.registerButtonTriggered
-            .sink { [weak self] in
+            .sink { [weak self] (email, password) in
+                guard let self else { return }
+                signUp(email: email ?? "", password: password ?? "")
+            }
+            .store(in: &cancellables)
+        
+        input.navToHomeButtonTriggered
+            .sink { [weak self]in
                 guard let self else { return }
                 coordinator.displayHomeScreen()
             }
@@ -79,24 +90,44 @@ private extension RegisterViewModel {
 //MARK: - CALLS
 extension RegisterViewModel {
     
-//    func getUsers() {
-//        coordinator.showLoader()
-//        useCase.getUsers()
-//            .receive(on: DispatchQueue.main)
-//            .sink { [weak self] completion in
-//                guard let self else { return }
-//                coordinator.hideLoader()
-//                switch completion {
-//                    case .finished: print("Completed")
-//                    case .failure(let error): print(error.localizedDescription)
-//                }
-//            } receiveValue: { [weak self] users in
-//                if let randomUser = users.randomElement() {
-//                    self?.user = randomUser
-//                    self?.getAlbums(userId: randomUser.id ?? 0)
-//                }
-//            }
-//            .store(in: &cancellables)
-//    }
-    
+    func signUp(email: String, password: String) {
+        coordinator.showLoader()
+        
+        guard !email.isEmpty, !password.isEmpty else {
+            output.showToast.send("Please enter both email and password.")
+            coordinator.hideLoader()
+            return
+        }
+        
+        Task {
+            do {
+                let returnedUserData = try await AuthenticationManager.shared.createUser(email: email, password: password)
+                coordinator.hideLoader()
+                output.showToast.send("Your account has been created successfully!")
+                output.reloadView.send()
+                print(returnedUserData)
+            } catch let error as NSError {
+                coordinator.hideLoader()
+                
+                var errorMessage = "Something went wrong. Please try again."
+                
+                if let authError = AuthErrorCode(rawValue: error.code) {
+                    switch authError {
+                    case .emailAlreadyInUse:
+                        errorMessage = "This email is already registered. Try logging in instead."
+                    case .invalidEmail:
+                        errorMessage = "Please enter a valid email address."
+                    case .networkError:
+                        errorMessage = "Network issue detected. Please check your internet connection."
+                    default:
+                        errorMessage = error.localizedDescription
+                    }
+                }
+                
+                output.showToast.send(errorMessage)
+            }
+        }
+    }
+
+
 }

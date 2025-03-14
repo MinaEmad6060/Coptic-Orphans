@@ -12,14 +12,11 @@ import FirebaseAuth
 
 //MARK: - PROTOCOL
 protocol LoginViewModelProtocol{
-//    var user: UserDomain? { get set }
-    
+ 
     var output: LoginViewModelOutput { get }
     var input: LoginViewModelInput { get }
 
-    func signUp(email: String, password: String)
     func signIn(email: String, password: String)
-//    func getUsers()
 }
 
 //MARK: - ViewModel-Output
@@ -92,31 +89,11 @@ extension LoginViewModel {
 //MARK: - CALLS
 extension LoginViewModel {
     
-    func signUp(email: String, password: String) {
-        guard !email.isEmpty, !password.isEmpty else {
-            print("No email or password found.")
-            return
-        }
-        
-        Task {
-            do {
-                let returnedUserData = try await AuthenticationManager.shared.createUser(email: email, password: password)
-                print("Success")
-                print(returnedUserData)
-            } catch let error as NSError {
-                if error.code == AuthErrorCode.emailAlreadyInUse.rawValue {
-                    print("The email address is already in use by another account.")
-                } else {
-                    print("Error: \(error.localizedDescription)")
-                }
-            }
-        }
-    }
-    
     func signIn(email: String, password: String) {
         coordinator.showLoader()
         guard !email.isEmpty, !password.isEmpty else {
             print("No email or password found.")
+            coordinator.hideLoader()
             return
         }
         

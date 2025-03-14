@@ -42,6 +42,7 @@ class RegisterViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
+        bindhomeViewModel()
     }
     
     // MARK: - FUNCTIONS
@@ -69,7 +70,21 @@ class RegisterViewController: UIViewController {
     
     // MARK: - BUTTONS
     @IBAction func btnSignUp(_ sender: Any) {
-        viewModel?.input.registerButtonTriggered.send()
+        guard !emailTextField.textField.text!.isEmpty,
+              !passwordTextField.textField.text!.isEmpty,
+              !confirmPasswordTextField.textField.text!.isEmpty else {
+            showToast(message: "Please fill all fields")
+            return
+        }
+        
+        guard passwordTextField.textField.text == confirmPasswordTextField.textField.text else {
+            confirmPasswordErrorMessageText.isHidden = false
+            return
+        }
+        
+        confirmPasswordErrorMessageText.isHidden = true
+        
+        viewModel?.input.registerButtonTriggered.send((emailTextField.textField.text,passwordTextField.textField.text))
     }
     
     
@@ -78,4 +93,40 @@ class RegisterViewController: UIViewController {
     }
 
 
+}
+
+
+
+//MARK: - BINDING-VIEW-MODEL
+private extension RegisterViewController {
+    func bindhomeViewModel() {
+        bindShowToastView()
+        bindReloadView()
+    }
+    
+    func bindShowToastView() {
+        viewModel?.output.showToast
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] message in
+                guard let self else { return }
+                self.showToast(message: message)
+            }
+            .store(in: &cancellables)
+    }
+     
+    func bindReloadView() {
+        viewModel?.output.reloadView
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] message in
+                guard let self else { return }
+                btnSignUpOutlet.isEnabled = false
+                btnGoogleOutlet.isEnabled = false
+                btnFaceBookOutlet.isEnabled = false
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2){ [weak self] in
+                    self?.viewModel?.input.navToHomeButtonTriggered.send()
+                }
+            }
+            .store(in: &cancellables)
+    }
+    
 }
