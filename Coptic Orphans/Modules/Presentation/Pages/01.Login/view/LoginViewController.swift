@@ -40,6 +40,7 @@ class LoginViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
+        bindhomeViewModel()
     }
     
     // MARK: - FUNCTIONS
@@ -66,10 +67,49 @@ class LoginViewController: UIViewController {
     
     // MARK: - BUTTONS
     @IBAction func btnSignIn(_ sender: Any) {
-        viewModel?.input.loginButtonTriggered.send()
+        guard !emailTextField.textField.text!.isEmpty, !passwordTextField.textField.text!.isEmpty else {
+            showToast(message: "Please fill all fields")
+            return
+        }
+        viewModel?.input.loginButtonTriggered.send((emailTextField.textField.text, passwordTextField.textField.text))
     }
 
     @IBAction func btnRegister(_ sender: Any) {
         viewModel?.input.registerButtonTriggered.send()
     }
+}
+
+
+//MARK: - BINDING-VIEW-MODEL
+private extension LoginViewController {
+    func bindhomeViewModel() {
+        bindShowToastView()
+        bindReloadView()
+    }
+    
+    func bindShowToastView() {
+        viewModel?.output.showToast
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] message in
+                guard let self else { return }
+                self.showToast(message: message)
+            }
+            .store(in: &cancellables)
+    }
+     
+    func bindReloadView() {
+        viewModel?.output.reloadView
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] message in
+                guard let self else { return }
+                btnSignInOutlet.isEnabled = false
+                btnGoogleOutlet.isEnabled = false
+                btnFaceBookOutlet.isEnabled = false
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2){ [weak self] in
+                    self?.viewModel?.input.navToHomeButtonTriggered.send()
+                }
+            }
+            .store(in: &cancellables)
+    }
+    
 }

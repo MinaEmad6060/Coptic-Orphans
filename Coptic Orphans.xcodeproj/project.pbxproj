@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		4025B4C22D84881D00BD666F /* NVActivityIndicatorView in Frameworks */ = {isa = PBXBuildFile; productRef = 4025B4C12D84881D00BD666F /* NVActivityIndicatorView */; };
 		4025B4C42D84881D00BD666F /* NVActivityIndicatorViewExtended in Frameworks */ = {isa = PBXBuildFile; productRef = 4025B4C32D84881D00BD666F /* NVActivityIndicatorViewExtended */; };
+		409F46A72D84DAC000DE90B2 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 409F46A62D84DAC000DE90B2 /* FirebaseAuth */; };
+		409F4F672D84E32100DE90B2 /* Toast in Frameworks */ = {isa = PBXBuildFile; productRef = 409F4F662D84E32100DE90B2 /* Toast */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,7 +43,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				409F4F672D84E32100DE90B2 /* Toast in Frameworks */,
 				4025B4C22D84881D00BD666F /* NVActivityIndicatorView in Frameworks */,
+				409F46A72D84DAC000DE90B2 /* FirebaseAuth in Frameworks */,
 				4025B4C42D84881D00BD666F /* NVActivityIndicatorViewExtended in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -87,6 +91,8 @@
 			packageProductDependencies = (
 				4025B4C12D84881D00BD666F /* NVActivityIndicatorView */,
 				4025B4C32D84881D00BD666F /* NVActivityIndicatorViewExtended */,
+				409F46A62D84DAC000DE90B2 /* FirebaseAuth */,
+				409F4F662D84E32100DE90B2 /* Toast */,
 			);
 			productName = "Coptic Orphans";
 			productReference = 4025B4122D847BAF00BD666F /* Coptic Orphans.app */;
@@ -118,6 +124,8 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				4025B4C02D84881D00BD666F /* XCRemoteSwiftPackageReference "NVActivityIndicatorView" */,
+				409F46A52D84DAC000DE90B2 /* XCLocalSwiftPackageReference "../../Documents/packages/firebase-ios-sdk" */,
+				409F4F652D84E32100DE90B2 /* XCRemoteSwiftPackageReference "Toast-Swift" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 4025B4132D847BAF00BD666F /* Products */;
@@ -350,6 +358,13 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCLocalSwiftPackageReference section */
+		409F46A52D84DAC000DE90B2 /* XCLocalSwiftPackageReference "../../Documents/packages/firebase-ios-sdk" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = "../../Documents/packages/firebase-ios-sdk";
+		};
+/* End XCLocalSwiftPackageReference section */
+
 /* Begin XCRemoteSwiftPackageReference section */
 		4025B4C02D84881D00BD666F /* XCRemoteSwiftPackageReference "NVActivityIndicatorView" */ = {
 			isa = XCRemoteSwiftPackageReference;
@@ -357,6 +372,14 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 5.2.0;
+			};
+		};
+		409F4F652D84E32100DE90B2 /* XCRemoteSwiftPackageReference "Toast-Swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/scalessec/Toast-Swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.1.1;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
@@ -371,6 +394,15 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 4025B4C02D84881D00BD666F /* XCRemoteSwiftPackageReference "NVActivityIndicatorView" */;
 			productName = NVActivityIndicatorViewExtended;
+		};
+		409F46A62D84DAC000DE90B2 /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = FirebaseAuth;
+		};
+		409F4F662D84E32100DE90B2 /* Toast */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 409F4F652D84E32100DE90B2 /* XCRemoteSwiftPackageReference "Toast-Swift" */;
+			productName = Toast;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

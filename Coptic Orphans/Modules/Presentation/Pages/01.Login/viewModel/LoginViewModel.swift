@@ -8,6 +8,7 @@
 
 import Foundation
 import Combine
+import FirebaseAuth
 
 //MARK: - PROTOCOL
 protocol LoginViewModelProtocol{
@@ -16,6 +17,8 @@ protocol LoginViewModelProtocol{
     var output: LoginViewModelOutput { get }
     var input: LoginViewModelInput { get }
 
+    func signUp(email: String, password: String)
+    func signIn(email: String, password: String)
 //    func getUsers()
 }
 
@@ -23,12 +26,13 @@ protocol LoginViewModelProtocol{
 struct LoginViewModelOutput {
     let isLoading: PassthroughSubject<Bool, Never> = .init()
     let reloadView: PassthroughSubject<Void, Never> = .init()
-    let showToast: PassthroughSubject<Void, Never> = .init()
+    let showToast: PassthroughSubject<String, Never> = .init()
 }
 
 //MARK: - ViewModel-Input
 struct LoginViewModelInput {
-    let loginButtonTriggered = PassthroughSubject<Void, Never>()
+    let loginButtonTriggered = PassthroughSubject<(String?, String?), Never>()
+    let navToHomeButtonTriggered = PassthroughSubject<Void, Never>()
     let registerButtonTriggered = PassthroughSubject<Void, Never>()
 }
 
@@ -63,11 +67,19 @@ class LoginViewModel: LoginViewModelProtocol {
 extension LoginViewModel {
     func configureInputObservers() {
         input.loginButtonTriggered
-            .sink { [weak self] in
+            .sink { [weak self] (email, password) in
+                guard let self else { return }
+                signIn(email: email ?? "", password: password ?? "")
+            }
+            .store(in: &cancellables)
+        
+        input.navToHomeButtonTriggered
+            .sink { [weak self]in
                 guard let self else { return }
                 coordinator.displayHomeScreen()
             }
             .store(in: &cancellables)
+        
         input.registerButtonTriggered
             .sink { [weak self] in
                 guard let self else { return }
@@ -79,6 +91,56 @@ extension LoginViewModel {
     
 //MARK: - CALLS
 extension LoginViewModel {
+    
+    func signUp(email: String, password: String) {
+        guard !email.isEmpty, !password.isEmpty else {
+            print("No email or password found.")
+            return
+        }
+        
+        Task {
+            do {
+                let returnedUserData = try await AuthenticationManager.shared.createUser(email: email, password: password)
+                print("Success")
+                print(returnedUserData)
+            } catch let error as NSError {
+                if error.code == AuthErrorCode.emailAlreadyInUse.rawValue {
+                    print("The email address is already in use by another account.")
+                } else {
+                    print("Error: \(error.localizedDescription)")
+                }
+            }
+        }
+    }
+    
+    func signIn(email: String, password: String) {
+        coordinator.showLoader()
+        guard !email.isEmpty, !password.isEmpty else {
+            print("No email or password found.")
+            return
+        }
+        
+        Task {
+            do {
+                let returnedUserData = try await AuthenticationManager.shared.signIn(email: email, password: password)
+                coordinator.hideLoader()
+                output.showToast.send("Sign-in successful")
+                output.reloadView.send()
+                print(returnedUserData)
+            } catch let error as NSError {
+                coordinator.hideLoader()
+                if error.code == AuthErrorCode.wrongPassword.rawValue {
+                    output.showToast.send("Incorrect password. Please try again.")
+                } else if error.code == AuthErrorCode.userNotFound.rawValue {
+                    output.showToast.send("No account found for this email.")
+                } else {
+                    output.showToast.send("\(error.localizedDescription)")
+                }
+            }
+        }
+    }
+
+
     
 //    func getUsers() {
 //        coordinator.showLoader()
