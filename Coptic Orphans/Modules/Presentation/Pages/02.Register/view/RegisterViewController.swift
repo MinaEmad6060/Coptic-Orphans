@@ -69,7 +69,7 @@ class RegisterViewController: UIViewController {
     
     // MARK: - BUTTONS
     @IBAction func btnSignUp(_ sender: Any) {
-
+        viewModel?.input.registerButtonTriggered.send()
     }
     
     

@@ -1,5 +1,5 @@
 //
-//  01.LoginUseCase.swift
+//  03.HomeUseCase.swift
 //  Coptic Orphans
 //
 //  Created by Mina Emad on 14/03/2025.
@@ -9,19 +9,19 @@
 import Combine
 
 //MARK: - UseCase
-protocol LoginUseCaseProtocol {
+protocol HomeUseCaseProtocol {
 //    func getUsers() -> AnyPublisher<[UserDomain], NetworkError>
 }
 
 
-final class LoginUseCase {
+final class HomeUseCase {
     let repository: AppRepositoryProtocol
-    init(dependencies: LoginUseCaseDependanciesProtocol) {
+    init(dependencies: HomeUseCaseDependanciesProtocol) {
         self.repository = dependencies.repository
     }
 }
 
-extension LoginUseCase: LoginUseCaseProtocol {
+extension HomeUseCase: HomeUseCaseProtocol {
     
 //    func getUsers() -> AnyPublisher<[UserDomain], NetworkError> {
 //        repository.getUsers()
@@ -36,11 +36,11 @@ extension LoginUseCase: LoginUseCaseProtocol {
 
 
 //MARK: - UseCase-Dependancies
-protocol LoginUseCaseDependanciesProtocol{
+protocol HomeUseCaseDependanciesProtocol{
     var repository: AppRepositoryProtocol { get }
 }
 
 
-struct LoginUseCaseDependencies: LoginUseCaseDependanciesProtocol {
+struct HomeUseCaseDependencies: HomeUseCaseDependanciesProtocol {
     var repository: AppRepositoryProtocol
 }

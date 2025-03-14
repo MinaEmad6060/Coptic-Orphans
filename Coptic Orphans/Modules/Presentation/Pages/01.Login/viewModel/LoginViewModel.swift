@@ -28,6 +28,7 @@ struct LoginViewModelOutput {
 
 //MARK: - ViewModel-Input
 struct LoginViewModelInput {
+    let loginButtonTriggered = PassthroughSubject<Void, Never>()
     let registerButtonTriggered = PassthroughSubject<Void, Never>()
 }
 
@@ -61,6 +62,12 @@ class LoginViewModel: LoginViewModelProtocol {
 //MARK: - Observe-Inputs
 extension LoginViewModel {
     func configureInputObservers() {
+        input.loginButtonTriggered
+            .sink { [weak self] in
+                guard let self else { return }
+                coordinator.displayHomeScreen()
+            }
+            .store(in: &cancellables)
         input.registerButtonTriggered
             .sink { [weak self] in
                 guard let self else { return }

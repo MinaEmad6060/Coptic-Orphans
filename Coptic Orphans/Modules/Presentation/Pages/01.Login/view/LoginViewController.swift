@@ -66,7 +66,7 @@ class LoginViewController: UIViewController {
     
     // MARK: - BUTTONS
     @IBAction func btnSignIn(_ sender: Any) {
-        
+        viewModel?.input.loginButtonTriggered.send()
     }
 
     @IBAction func btnRegister(_ sender: Any) {
