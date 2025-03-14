@@ -4,25 +4,83 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
-        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
-        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="CustomTextField" customModule="Coptic_Orphans" customModuleProvider="target">
+            <connections>
+                <outlet property="leadingImage" destination="Jq3-om-tLX" id="jLT-ay-B01"/>
+                <outlet property="textField" destination="6gB-7l-clz" id="o3G-y3-Nbe"/>
+                <outlet property="trailingImage" destination="9CR-5M-iSv" id="k5H-Dw-Wi4"/>
+            </connections>
+        </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
         <view contentMode="scaleToFill" id="iN0-l3-epB">
-            <rect key="frame" x="0.0" y="0.0" width="343" height="80"/>
+            <rect key="frame" x="0.0" y="0.0" width="361" height="56"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Mdw-iC-2cO">
+                    <rect key="frame" x="0.0" y="0.0" width="361" height="56"/>
+                    <subviews>
+                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="person" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="Jq3-om-tLX">
+                            <rect key="frame" x="16" y="17.333333333333332" width="24" height="21.333333333333339"/>
+                            <color key="tintColor" name="secondary"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="24" id="481-Cc-QFa"/>
+                                <constraint firstAttribute="width" constant="24" id="qVB-Lf-Mow"/>
+                            </constraints>
+                        </imageView>
+                        <stackView opaque="NO" contentMode="scaleToFill" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="M77-fT-ybW">
+                            <rect key="frame" x="52" y="8" width="293" height="40"/>
+                            <subviews>
+                                <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Email" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="6gB-7l-clz">
+                                    <rect key="frame" x="0.0" y="0.0" width="261" height="40"/>
+                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                    <textInputTraits key="textInputTraits"/>
+                                </textField>
+                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="eye.fill" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="9CR-5M-iSv">
+                                    <rect key="frame" x="269" y="2" width="24" height="36"/>
+                                    <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    <constraints>
+                                        <constraint firstAttribute="width" constant="24" id="Uce-RM-GBF"/>
+                                    </constraints>
+                                </imageView>
+                            </subviews>
+                        </stackView>
+                    </subviews>
+                    <constraints>
+                        <constraint firstItem="M77-fT-ybW" firstAttribute="top" secondItem="Mdw-iC-2cO" secondAttribute="top" constant="8" id="0Ps-5X-IwF"/>
+                        <constraint firstItem="M77-fT-ybW" firstAttribute="leading" secondItem="Jq3-om-tLX" secondAttribute="trailing" constant="12" id="1sz-vX-PCS"/>
+                        <constraint firstItem="Jq3-om-tLX" firstAttribute="top" secondItem="Mdw-iC-2cO" secondAttribute="top" constant="16" id="6vs-Bf-h47"/>
+                        <constraint firstItem="Jq3-om-tLX" firstAttribute="centerY" secondItem="Mdw-iC-2cO" secondAttribute="centerY" id="BaC-BO-WzO"/>
+                        <constraint firstAttribute="bottom" secondItem="Jq3-om-tLX" secondAttribute="bottom" constant="16" id="DkP-Nk-CGa"/>
+                        <constraint firstItem="M77-fT-ybW" firstAttribute="centerY" secondItem="Jq3-om-tLX" secondAttribute="centerY" id="MP1-hd-YBs"/>
+                        <constraint firstItem="Jq3-om-tLX" firstAttribute="leading" secondItem="Mdw-iC-2cO" secondAttribute="leading" constant="16" id="NfN-sB-Jhh"/>
+                        <constraint firstAttribute="height" constant="56" id="dPs-Wa-N72"/>
+                        <constraint firstAttribute="bottom" secondItem="M77-fT-ybW" secondAttribute="bottom" constant="8" id="hgE-fs-PVM"/>
+                        <constraint firstAttribute="trailing" secondItem="M77-fT-ybW" secondAttribute="trailing" constant="16" id="qr9-2u-Trp"/>
+                    </constraints>
+                </view>
+            </subviews>
             <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
-            <color key="backgroundColor" systemColor="systemBrownColor"/>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+            <constraints>
+                <constraint firstItem="Mdw-iC-2cO" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="0ae-PL-Ezd"/>
+                <constraint firstAttribute="bottom" secondItem="Mdw-iC-2cO" secondAttribute="bottom" id="5HW-dj-HXF"/>
+                <constraint firstItem="Mdw-iC-2cO" firstAttribute="trailing" secondItem="vUN-kp-3ea" secondAttribute="trailing" id="NS5-PK-tPp"/>
+                <constraint firstItem="Mdw-iC-2cO" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="hBm-Ej-JQX"/>
+            </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-            <point key="canvasLocation" x="132" y="-12"/>
+            <point key="canvasLocation" x="130.53435114503816" y="-16.901408450704228"/>
         </view>
     </objects>
     <resources>
-        <systemColor name="systemBrownColor">
-            <color red="0.63529411764705879" green="0.51764705882352946" blue="0.36862745098039218" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-        </systemColor>
+        <image name="eye.fill" catalog="system" width="128" height="80"/>
+        <image name="person" catalog="system" width="128" height="121"/>
+        <namedColor name="secondary">
+            <color red="0.46666666870000001" green="0.47058826679999999" blue="0.48235297199999999" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+        </namedColor>
     </resources>
 </document>

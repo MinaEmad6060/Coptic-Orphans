@@ -1,5 +1,5 @@
 //
-//  LoginViewController.swift
+//  RegisterViewController.swift
 //  Coptic Orphans
 //
 //  Created by Mina Emad on 14/03/2025.
@@ -8,26 +8,28 @@
 import UIKit
 import Combine
 
-class LoginViewController: UIViewController {
+class RegisterViewController: UIViewController {
 
     
     // MARK: - OUTLETS
     @IBOutlet weak var emailTextField: CustomTextField!
     @IBOutlet weak var passwordTextField: CustomTextField!
+    @IBOutlet weak var confirmPasswordTextField: CustomTextField!
     
     @IBOutlet weak var emailErrorMessageText: UILabel!
-    @IBOutlet weak var btnSignInOutlet: UIButton!
-    
+    @IBOutlet weak var confirmPasswordErrorMessageText: UILabel!
+    @IBOutlet weak var btnSignUpOutlet: UIButton!
+    @IBOutlet weak var loginText: UILabel!
+
     @IBOutlet weak var btnGoogleOutlet: UIButton!
     @IBOutlet weak var btnFaceBookOutlet: UIButton!
-
     
     // MARK: - Properties
     private var cancellables = Set<AnyCancellable>()
-    private var viewModel: LoginViewModelProtocol?
+    private var viewModel: RegisterViewModelProtocol?
     
     //MARK: - INITIALIZER
-    init(viewModel: LoginViewModelProtocol) {
+    init(viewModel: RegisterViewModelProtocol) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
@@ -44,8 +46,10 @@ class LoginViewController: UIViewController {
     
     // MARK: - FUNCTIONS
     private func setupViews(){
+        self.navigationItem.hidesBackButton = true
         initTextFields(textField: emailTextField, leadingImageName: "person", placeholder: "Email", isPassword: false)
         initTextFields(textField: passwordTextField, leadingImageName: "lock", placeholder: "Password", isPassword: true)
+        initTextFields(textField: confirmPasswordTextField, leadingImageName: "lock", placeholder: "Confirm Password", isPassword: true)
         initBtns()
     }
     
@@ -57,19 +61,21 @@ class LoginViewController: UIViewController {
     }
     
     private func initBtns(){
-        btnSignInOutlet.layer.cornerRadius = 16
+        btnSignUpOutlet.layer.cornerRadius = 16
         btnGoogleOutlet.layer.cornerRadius = btnGoogleOutlet.frame.width/2
         btnFaceBookOutlet.layer.cornerRadius = btnGoogleOutlet.frame.width/2
     }
-
     
     
     // MARK: - BUTTONS
-    @IBAction func btnSignIn(_ sender: Any) {
-        
+    @IBAction func btnSignUp(_ sender: Any) {
+
+    }
+    
+    
+    @IBAction func btnLogin(_ sender: Any) {
+        viewModel?.input.loginButtonTriggered.send()
     }
 
-    @IBAction func btnRegister(_ sender: Any) {
-        viewModel?.input.registerButtonTriggered.send()
-    }
+
 }

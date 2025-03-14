@@ -1,77 +1,75 @@
 //
-//  LoginViewModel.swift
+//  RegisterViewModel.swift
 //  Coptic Orphans
 //
 //  Created by Mina Emad on 14/03/2025.
 //
 
-
 import Foundation
 import Combine
 
 //MARK: - PROTOCOL
-protocol LoginViewModelProtocol{
+protocol RegisterViewModelProtocol{
 //    var user: UserDomain? { get set }
     
-    var output: LoginViewModelOutput { get }
-    var input: LoginViewModelInput { get }
+    var output: RegisterViewModelOutput { get }
+    var input: RegisterViewModelInput { get }
 
 //    func getUsers()
 }
 
 //MARK: - ViewModel-Output
-struct LoginViewModelOutput {
+struct RegisterViewModelOutput {
     let isLoading: PassthroughSubject<Bool, Never> = .init()
     let reloadView: PassthroughSubject<Void, Never> = .init()
     let showToast: PassthroughSubject<Void, Never> = .init()
 }
 
 //MARK: - ViewModel-Input
-struct LoginViewModelInput {
-    let registerButtonTriggered = PassthroughSubject<Void, Never>()
+struct RegisterViewModelInput {
+    let loginButtonTriggered = PassthroughSubject<Void, Never>()
 }
 
 
 //MARK: - IMPLEMENTATION
-class LoginViewModel: LoginViewModelProtocol {
+class RegisterViewModel: RegisterViewModelProtocol {
     
     private let coordinator: AppCoordinatorProtocol
     private var useCase: LoginUseCaseProtocol
     private var cancellables = Set<AnyCancellable>()
     
 
-    var output: LoginViewModelOutput
-    var input: LoginViewModelInput
+    var output: RegisterViewModelOutput
+    var input: RegisterViewModelInput
     
     init(coordinator: AppCoordinatorProtocol,
          useCase: LoginUseCaseProtocol,
-         output: LoginViewModelOutput = LoginViewModelOutput(),
-         input: LoginViewModelInput = LoginViewModelInput()) {
+         output: RegisterViewModelOutput = RegisterViewModelOutput(),
+         input: RegisterViewModelInput = RegisterViewModelInput()) {
         self.coordinator = coordinator
         self.useCase = useCase
         self.output = output
         self.input = input
         configureInputObservers()
     }
-
     
 }
 
 
 //MARK: - Observe-Inputs
-extension LoginViewModel {
+private extension RegisterViewModel {
     func configureInputObservers() {
-        input.registerButtonTriggered
+        input.loginButtonTriggered
             .sink { [weak self] in
                 guard let self else { return }
-                coordinator.displayRegisterScreen()
+                coordinator.router.pop(animated: true)
             }
             .store(in: &cancellables)
     }
 }
     
 //MARK: - CALLS
-extension LoginViewModel {
+extension RegisterViewModel {
     
 //    func getUsers() {
 //        coordinator.showLoader()

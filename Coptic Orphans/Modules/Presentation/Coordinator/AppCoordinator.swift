@@ -9,6 +9,7 @@
 
 protocol AppCoordinatorProtocol: Coordinator {
     func displayLoginScreen()
+    func displayRegisterScreen()
 }
 
 
@@ -24,6 +25,12 @@ final class AppCoordinator: AppCoordinatorProtocol {
     func displayLoginScreen() {
         let viewModel = LoginViewModel(coordinator: self, useCase: loginUseCase())
         let viewController = LoginViewController(viewModel: viewModel)
+        self.router.push(viewController, animated: true)
+    }
+    
+    func displayRegisterScreen() {
+        let viewModel = RegisterViewModel(coordinator: self, useCase: loginUseCase())
+        let viewController = RegisterViewController(viewModel: viewModel)
         self.router.push(viewController, animated: true)
     }
    
