@@ -10,12 +10,11 @@
 		4025B4C22D84881D00BD666F /* NVActivityIndicatorView in Frameworks */ = {isa = PBXBuildFile; productRef = 4025B4C12D84881D00BD666F /* NVActivityIndicatorView */; };
 		4025B4C42D84881D00BD666F /* NVActivityIndicatorViewExtended in Frameworks */ = {isa = PBXBuildFile; productRef = 4025B4C32D84881D00BD666F /* NVActivityIndicatorViewExtended */; };
 		403FD4ED2D8503A50098078A /* FacebookLogin in Frameworks */ = {isa = PBXBuildFile; productRef = 403FD4EC2D8503A50098078A /* FacebookLogin */; };
+		405DE2752D85863A00849367 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 405DE2742D85863A00849367 /* Alamofire */; };
 		409F46A72D84DAC000DE90B2 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 409F46A62D84DAC000DE90B2 /* FirebaseAuth */; };
 		409F4F672D84E32100DE90B2 /* Toast in Frameworks */ = {isa = PBXBuildFile; productRef = 409F4F662D84E32100DE90B2 /* Toast */; };
 		409F58802D84ED7900DE90B2 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 409F587F2D84ED7900DE90B2 /* GoogleSignIn */; };
 		409F58822D84ED7900DE90B2 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 409F58812D84ED7900DE90B2 /* GoogleSignInSwift */; };
-		40F9BFF02D85846E00182408 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 40F9BFEF2D85846E00182408 /* Alamofire */; };
-		40F9BFF22D85846E00182408 /* AlamofireDynamic in Frameworks */ = {isa = PBXBuildFile; productRef = 40F9BFF12D85846E00182408 /* AlamofireDynamic */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -49,13 +48,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				409F58802D84ED7900DE90B2 /* GoogleSignIn in Frameworks */,
-				40F9BFF02D85846E00182408 /* Alamofire in Frameworks */,
+				405DE2752D85863A00849367 /* Alamofire in Frameworks */,
 				409F4F672D84E32100DE90B2 /* Toast in Frameworks */,
 				4025B4C22D84881D00BD666F /* NVActivityIndicatorView in Frameworks */,
 				409F58822D84ED7900DE90B2 /* GoogleSignInSwift in Frameworks */,
 				409F46A72D84DAC000DE90B2 /* FirebaseAuth in Frameworks */,
 				403FD4ED2D8503A50098078A /* FacebookLogin in Frameworks */,
-				40F9BFF22D85846E00182408 /* AlamofireDynamic in Frameworks */,
 				4025B4C42D84881D00BD666F /* NVActivityIndicatorViewExtended in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -106,8 +104,7 @@
 				409F587F2D84ED7900DE90B2 /* GoogleSignIn */,
 				409F58812D84ED7900DE90B2 /* GoogleSignInSwift */,
 				403FD4EC2D8503A50098078A /* FacebookLogin */,
-				40F9BFEF2D85846E00182408 /* Alamofire */,
-				40F9BFF12D85846E00182408 /* AlamofireDynamic */,
+				405DE2742D85863A00849367 /* Alamofire */,
 			);
 			productName = "Coptic Orphans";
 			productReference = 4025B4122D847BAF00BD666F /* Coptic Orphans.app */;
@@ -143,7 +140,7 @@
 				409F4F652D84E32100DE90B2 /* XCRemoteSwiftPackageReference "Toast-Swift" */,
 				409F587E2D84ED7900DE90B2 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 				403FD4EB2D8503A50098078A /* XCLocalSwiftPackageReference "../../Documents/packages/facebook-ios-sdk" */,
-				40F9BFEE2D85846E00182408 /* XCRemoteSwiftPackageReference "Alamofire" */,
+				405DE2732D85863A00849367 /* XCRemoteSwiftPackageReference "Alamofire" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 4025B4132D847BAF00BD666F /* Products */;
@@ -396,6 +393,14 @@
 				minimumVersion = 5.2.0;
 			};
 		};
+		405DE2732D85863A00849367 /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.10.2;
+			};
+		};
 		409F4F652D84E32100DE90B2 /* XCRemoteSwiftPackageReference "Toast-Swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/scalessec/Toast-Swift";
@@ -410,14 +415,6 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 8.0.0;
-			};
-		};
-		40F9BFEE2D85846E00182408 /* XCRemoteSwiftPackageReference "Alamofire" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 5.10.2;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
@@ -437,6 +434,11 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = FacebookLogin;
 		};
+		405DE2742D85863A00849367 /* Alamofire */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 405DE2732D85863A00849367 /* XCRemoteSwiftPackageReference "Alamofire" */;
+			productName = Alamofire;
+		};
 		409F46A62D84DAC000DE90B2 /* FirebaseAuth */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = FirebaseAuth;
@@ -455,16 +457,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 409F587E2D84ED7900DE90B2 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
 			productName = GoogleSignInSwift;
-		};
-		40F9BFEF2D85846E00182408 /* Alamofire */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 40F9BFEE2D85846E00182408 /* XCRemoteSwiftPackageReference "Alamofire" */;
-			productName = Alamofire;
-		};
-		40F9BFF12D85846E00182408 /* AlamofireDynamic */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 40F9BFEE2D85846E00182408 /* XCRemoteSwiftPackageReference "Alamofire" */;
-			productName = AlamofireDynamic;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

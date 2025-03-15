@@ -15,16 +15,17 @@ class HomeViewController: UIViewController {
     @IBOutlet weak var btnLogoutOutlet: UIButton!
     @IBOutlet weak var topView: UIView!
     @IBOutlet weak var searchBar: UISearchBar!
-    @IBOutlet weak var repositoryTableview: UITableView!
+    @IBOutlet weak var repositoryTableView: UITableView!
     
     // MARK: - Properties
     private var cancellables = Set<AnyCancellable>()
     private var viewModel: HomeViewModelProtocol?
     
     var repositories: [Repository] = []
+    private var filteredRepositories: [Repository] = []
+    private var isSearching = false
     var currentPage = 1
     var isFetching = false
-    var searchQuery = ""
     
     //MARK: - INITIALIZER
     init(viewModel: HomeViewModelProtocol) {
@@ -44,12 +45,13 @@ class HomeViewController: UIViewController {
     }
     
     private func initViewController() {
-        repositoryTableview.delegate = self
-        repositoryTableview.dataSource = self
-        searchBar.delegate = self
+        repositoryTableView.delegate = self
+        repositoryTableView.dataSource = self
+        repositoryTableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+
+        setupSearchBar()
         fetchRepositories(page: currentPage)
     }
-
 
     private func setupViews() {
         self.navigationItem.hidesBackButton = true
@@ -58,10 +60,9 @@ class HomeViewController: UIViewController {
         if let textField = searchBar.value(forKey: "searchField") as? UITextField {
             textField.layer.cornerRadius = 8
             textField.layer.masksToBounds = true
-            textField.backgroundColor = .white // Ensure visibility of the rounded corners
+            textField.backgroundColor = .white
         }
 
-        // Remove the search bar's default background
         searchBar.setBackgroundImage(UIImage(), for: .any, barMetrics: .default)
         searchBar.isTranslucent = true
     }
@@ -70,10 +71,7 @@ class HomeViewController: UIViewController {
         guard !isFetching else { return }
         isFetching = true
         
-        var url = "https://api.github.com/repositories?since=\(page * 30)"
-        if !searchQuery.isEmpty {
-            url = "https://api.github.com/search/repositories?q=\(searchQuery)&page=\(page)"
-        }
+        let url = "https://api.github.com/repositories?since=\(page * 30)"
         
         AF.request(url).responseDecodable(of: [Repository].self) { response in
             switch response.result {
@@ -83,7 +81,7 @@ class HomeViewController: UIViewController {
                 } else {
                     self.repositories.append(contentsOf: repos)
                 }
-                self.repositoryTableview.reloadData()
+                self.repositoryTableView.reloadData()
             case .failure(let error):
                 print("Error: \(error.localizedDescription)")
             }
@@ -91,7 +89,26 @@ class HomeViewController: UIViewController {
         }
     }
     
-    
+    // MARK: - Setup-SearchBar
+    private func setupSearchBar() {
+        searchBar.delegate = self
+        searchBar.searchTextField.addTarget(self, action: #selector(searchTextChanged), for: .editingChanged)
+    }
+        
+    @objc private func searchTextChanged() {
+        guard let text = searchBar.text?.lowercased(), !text.isEmpty else {
+            isSearching = false
+            repositoryTableView.reloadData()
+            return
+        }
+
+        isSearching = true
+        filteredRepositories = repositories.filter { repo in
+            return repo.name.lowercased().contains(text)
+        }
+
+        repositoryTableView.reloadData()
+    }
     
     // MARK: - Buttons
     @IBAction func btnLogout(_ sender: Any) {
@@ -101,17 +118,16 @@ class HomeViewController: UIViewController {
 
 extension HomeViewController: UITableViewDataSource, UITableViewDelegate{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return repositories.count
+        return isSearching ? filteredRepositories.count : repositories.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "RepoCell", for: indexPath)
-        let repo = repositories[indexPath.row]
-        cell.textLabel?.text = repo.name
-        cell.detailTextLabel?.text = repo.description ?? "No description"
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+        let repository = isSearching ? filteredRepositories[indexPath.row] : repositories[indexPath.row]
+        cell.textLabel?.text = repository.name
         return cell
     }
-    
+   
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         if indexPath.row == repositories.count - 5 {
             currentPage += 1
@@ -119,23 +135,30 @@ extension HomeViewController: UITableViewDataSource, UITableViewDelegate{
         }
     }
     
-    
 }
 
+
+// MARK: - UISearchBarDelegate
 extension HomeViewController: UISearchBarDelegate {
-    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        if let query = searchBar.text, !query.isEmpty {
-            searchQuery = query
-            currentPage = 1
-            repositories.removeAll()
-            fetchRepositories(page: currentPage)
-        }
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.text = ""
+        isSearching = false
+        repositoryTableView.reloadData()
         searchBar.resignFirstResponder()
     }
 }
+
 
 struct Repository: Decodable {
     let name: String
     let description: String?
     let html_url: String
 }
+/*
+ func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+     if indexPath.row == repositories.count - 5 {
+         currentPage += 1
+         fetchRepositories(page: currentPage)
+     }
+ }
+ */
