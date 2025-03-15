@@ -28,7 +28,7 @@ struct HomeViewModelOutput {
 
 //MARK: - ViewModel-Input
 struct HomeViewModelInput {
-    let registerButtonTriggered = PassthroughSubject<Void, Never>()
+    let logoutButtonTriggered = PassthroughSubject<Void, Never>()
 }
 
 
@@ -61,10 +61,10 @@ class HomeViewModel: HomeViewModelProtocol {
 //MARK: - Observe-Inputs
 extension HomeViewModel {
     func configureInputObservers() {
-        input.registerButtonTriggered
+        input.logoutButtonTriggered
             .sink { [weak self] in
                 guard let self else { return }
-                coordinator.displayRegisterScreen()
+                coordinator.router.pop(animated: true)
             }
             .store(in: &cancellables)
     }

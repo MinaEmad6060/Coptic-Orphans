@@ -73,6 +73,14 @@ class LoginViewController: UIViewController {
         }
         viewModel?.input.loginButtonTriggered.send((emailTextField.textField.text, passwordTextField.textField.text))
     }
+    
+    @IBAction func btnGoogle(_ sender: Any) {
+        viewModel?.input.loginUsingGoogleButtonTriggered.send()
+    }
+    
+    @IBAction func btnFaceBook(_ sender: Any) {
+        viewModel?.input.loginUsingFaceBookButtonTriggered.send()
+    }
 
     @IBAction func btnRegister(_ sender: Any) {
         viewModel?.input.registerButtonTriggered.send()

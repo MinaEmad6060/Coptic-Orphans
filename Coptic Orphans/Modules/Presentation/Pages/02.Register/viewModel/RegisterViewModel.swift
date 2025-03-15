@@ -8,6 +8,12 @@
 import Foundation
 import Combine
 import FirebaseAuth
+import UIKit
+import GoogleSignIn
+import FirebaseAuth
+import FBSDKCoreKit
+import FacebookLogin
+import FBSDKLoginKit
 
 //MARK: - PROTOCOL
 protocol RegisterViewModelProtocol{
@@ -31,6 +37,8 @@ struct RegisterViewModelOutput {
 //MARK: - ViewModel-Input
 struct RegisterViewModelInput {
     let registerButtonTriggered = PassthroughSubject<(String?, String?), Never>()
+    let registerUsingGoogleButtonTriggered = PassthroughSubject<Void, Never>()
+    let registerUsingFaceBookButtonTriggered = PassthroughSubject<Void, Never>()
     let navToHomeButtonTriggered = PassthroughSubject<Void, Never>()
     let loginButtonTriggered = PassthroughSubject<Void, Never>()
 }
@@ -68,6 +76,20 @@ private extension RegisterViewModel {
             .sink { [weak self] (email, password) in
                 guard let self else { return }
                 signUp(email: email ?? "", password: password ?? "")
+            }
+            .store(in: &cancellables)
+        
+        input.registerUsingGoogleButtonTriggered
+            .sink { [weak self] in
+                guard let self else { return }
+                signUpWithGoogle()
+            }
+            .store(in: &cancellables)
+        
+        input.registerUsingFaceBookButtonTriggered
+            .sink { [weak self] in
+                guard let self else { return }
+                registerWithFacebook()
             }
             .store(in: &cancellables)
         
@@ -128,6 +150,63 @@ extension RegisterViewModel {
             }
         }
     }
+    
+    func signUpWithGoogle() {
+        guard let rootViewController = UIApplication.shared.connectedScenes
+            .compactMap({ ($0 as? UIWindowScene)?.keyWindow?.rootViewController }).first else {
+            print("Unable to get root view controller")
+            return
+        }
+
+        coordinator.showLoader()
+
+        GIDSignIn.sharedInstance.signIn(withPresenting: rootViewController) { signInResult, error in
+            guard let result = signInResult, error == nil else {
+                self.coordinator.hideLoader()
+                self.output.showToast.send("Google Sign-In failed: \(error?.localizedDescription ?? "Unknown error")")
+                return
+            }
+
+            guard let idToken = result.user.idToken?.tokenString else {
+                self.coordinator.hideLoader()
+                self.output.showToast.send("Failed to retrieve Google ID token.")
+                return
+            }
+
+            let credential = GoogleAuthProvider.credential(withIDToken: idToken, accessToken: result.user.accessToken.tokenString)
+
+            Task {
+                do {
+                    let authResult = try await Auth.auth().signIn(with: credential)
+                    self.coordinator.hideLoader()
+                    self.output.showToast.send("Google Sign-In successful!")
+                    self.output.reloadView.send()
+                    print("User signed in: \(authResult.user.email ?? "No email")")
+                } catch {
+                    self.coordinator.hideLoader()
+                    self.output.showToast.send("Authentication failed: \(error.localizedDescription)")
+                }
+            }
+        }
+    }
+    
+    // MARK: - Facebook Sign-In
+    func registerWithFacebook() {
+        guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let rootVC = scene.windows.first?.rootViewController else { return }
+
+        Task {
+            do {
+                let user = try await AuthenticationManager.shared.signInWithFacebook(rootViewController: rootVC)
+                output.showToast.send("Registered as \(user.email ?? "")")
+                output.reloadView.send()
+            } catch {
+                output.showToast.send("Facebook Registration failed: \(error.localizedDescription)")
+                print("Facebook Registration failed: \(error.localizedDescription)")
+            }
+        }
+    }
 
 
+    
 }

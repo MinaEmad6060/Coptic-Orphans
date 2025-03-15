@@ -8,6 +8,7 @@
 import UIKit
 import Combine
 
+
 class RegisterViewController: UIViewController {
 
     
@@ -19,7 +20,6 @@ class RegisterViewController: UIViewController {
     @IBOutlet weak var emailErrorMessageText: UILabel!
     @IBOutlet weak var confirmPasswordErrorMessageText: UILabel!
     @IBOutlet weak var btnSignUpOutlet: UIButton!
-    @IBOutlet weak var loginText: UILabel!
 
     @IBOutlet weak var btnGoogleOutlet: UIButton!
     @IBOutlet weak var btnFaceBookOutlet: UIButton!
@@ -85,6 +85,15 @@ class RegisterViewController: UIViewController {
         confirmPasswordErrorMessageText.isHidden = true
         
         viewModel?.input.registerButtonTriggered.send((emailTextField.textField.text,passwordTextField.textField.text))
+    }
+    
+    
+    @IBAction func btnGoogle(_ sender: Any) {
+        viewModel?.input.registerUsingGoogleButtonTriggered.send()
+    }
+    
+    @IBAction func btnFaceBook(_ sender: Any) {
+        viewModel?.input.registerUsingFaceBookButtonTriggered.send()
     }
     
     

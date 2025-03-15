@@ -9,6 +9,8 @@
 import Foundation
 import Combine
 import FirebaseAuth
+import UIKit
+import GoogleSignIn
 
 //MARK: - PROTOCOL
 protocol LoginViewModelProtocol{
@@ -29,6 +31,8 @@ struct LoginViewModelOutput {
 //MARK: - ViewModel-Input
 struct LoginViewModelInput {
     let loginButtonTriggered = PassthroughSubject<(String?, String?), Never>()
+    let loginUsingGoogleButtonTriggered = PassthroughSubject<Void, Never>()
+    let loginUsingFaceBookButtonTriggered = PassthroughSubject<Void, Never>()
     let navToHomeButtonTriggered = PassthroughSubject<Void, Never>()
     let registerButtonTriggered = PassthroughSubject<Void, Never>()
 }
@@ -67,6 +71,20 @@ extension LoginViewModel {
             .sink { [weak self] (email, password) in
                 guard let self else { return }
                 signIn(email: email ?? "", password: password ?? "")
+            }
+            .store(in: &cancellables)
+        
+        input.loginUsingGoogleButtonTriggered
+            .sink { [weak self]in
+                guard let self else { return }
+                signInWithGoogle()
+            }
+            .store(in: &cancellables)
+        
+        input.loginUsingFaceBookButtonTriggered
+            .sink { [weak self]in
+                guard let self else { return }
+
             }
             .store(in: &cancellables)
         
@@ -117,26 +135,44 @@ extension LoginViewModel {
         }
     }
 
+    func signInWithGoogle() {
+        guard let rootViewController = UIApplication.shared.connectedScenes
+            .compactMap({ ($0 as? UIWindowScene)?.keyWindow?.rootViewController }).first else {
+            print("Unable to get root view controller")
+            return
+        }
 
-    
-//    func getUsers() {
-//        coordinator.showLoader()
-//        useCase.getUsers()
-//            .receive(on: DispatchQueue.main)
-//            .sink { [weak self] completion in
-//                guard let self else { return }
-//                coordinator.hideLoader()
-//                switch completion {
-//                    case .finished: print("Completed")
-//                    case .failure(let error): print(error.localizedDescription)
-//                }
-//            } receiveValue: { [weak self] users in
-//                if let randomUser = users.randomElement() {
-//                    self?.user = randomUser
-//                    self?.getAlbums(userId: randomUser.id ?? 0)
-//                }
-//            }
-//            .store(in: &cancellables)
-//    }
+        coordinator.showLoader()
+
+        GIDSignIn.sharedInstance.signIn(withPresenting: rootViewController) { signInResult, error in
+            guard let result = signInResult, error == nil else {
+                self.coordinator.hideLoader()
+                self.output.showToast.send("Google Sign-In failed: \(error?.localizedDescription ?? "Unknown error")")
+                return
+            }
+
+            guard let idToken = result.user.idToken?.tokenString else {
+                self.coordinator.hideLoader()
+                self.output.showToast.send("Failed to retrieve Google ID token.")
+                return
+            }
+
+            let credential = GoogleAuthProvider.credential(withIDToken: idToken, accessToken: result.user.accessToken.tokenString)
+
+            Task {
+                do {
+                    let authResult = try await Auth.auth().signIn(with: credential)
+                    self.coordinator.hideLoader()
+                    self.output.showToast.send("Google Sign-In successful!")
+                    self.output.reloadView.send()
+                    print("User signed in: \(authResult.user.email ?? "No email")")
+                } catch {
+                    self.coordinator.hideLoader()
+                    self.output.showToast.send("Authentication failed: \(error.localizedDescription)")
+                }
+            }
+        }
+    }
+
     
 }
