@@ -42,7 +42,6 @@ struct LoginViewModelInput {
 class LoginViewModel: LoginViewModelProtocol {
     
     private let coordinator: AppCoordinatorProtocol
-    private var useCase: LoginUseCaseProtocol
     private var cancellables = Set<AnyCancellable>()
     
 
@@ -50,16 +49,13 @@ class LoginViewModel: LoginViewModelProtocol {
     var input: LoginViewModelInput
     
     init(coordinator: AppCoordinatorProtocol,
-         useCase: LoginUseCaseProtocol,
          output: LoginViewModelOutput = LoginViewModelOutput(),
          input: LoginViewModelInput = LoginViewModelInput()) {
         self.coordinator = coordinator
-        self.useCase = useCase
         self.output = output
         self.input = input
         configureInputObservers()
     }
-
     
 }
 
@@ -74,12 +70,14 @@ extension LoginViewModel {
             }
             .store(in: &cancellables)
         
+        
         input.loginUsingGoogleButtonTriggered
             .sink { [weak self]in
                 guard let self else { return }
                 signInWithGoogle()
             }
             .store(in: &cancellables)
+        
         
         input.loginUsingFaceBookButtonTriggered
             .sink { [weak self]in
@@ -88,12 +86,14 @@ extension LoginViewModel {
             }
             .store(in: &cancellables)
         
+        
         input.navToHomeButtonTriggered
             .sink { [weak self]in
                 guard let self else { return }
                 coordinator.displayHomeScreen()
             }
             .store(in: &cancellables)
+        
         
         input.registerButtonTriggered
             .sink { [weak self] in
@@ -119,7 +119,7 @@ extension LoginViewModel {
             do {
                 let returnedUserData = try await AuthenticationManager.shared.signIn(email: email, password: password)
                 coordinator.hideLoader()
-                output.showToast.send("Sign-in successful")
+//                output.showToast.send("Sign-in successful")
                 output.reloadView.send()
                 print(returnedUserData)
             } catch let error as NSError {
@@ -147,7 +147,6 @@ extension LoginViewModel {
         GIDSignIn.sharedInstance.signIn(withPresenting: rootViewController) { signInResult, error in
             guard let result = signInResult, error == nil else {
                 self.coordinator.hideLoader()
-                self.output.showToast.send("Google Sign-In failed: \(error?.localizedDescription ?? "Unknown error")")
                 return
             }
 
@@ -163,7 +162,7 @@ extension LoginViewModel {
                 do {
                     let authResult = try await Auth.auth().signIn(with: credential)
                     self.coordinator.hideLoader()
-                    self.output.showToast.send("Google Sign-In successful!")
+//                    self.output.showToast.send("Google Sign-In successful!")
                     self.output.reloadView.send()
                     print("User signed in: \(authResult.user.email ?? "No email")")
                 } catch {

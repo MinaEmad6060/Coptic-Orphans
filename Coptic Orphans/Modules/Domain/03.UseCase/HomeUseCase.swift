@@ -34,7 +34,6 @@ extension HomeUseCase: HomeUseCaseProtocol {
 }
 
 
-
 //MARK: - UseCase-Dependancies
 protocol HomeUseCaseDependanciesProtocol{
     var repository: AppRepositoryProtocol { get }

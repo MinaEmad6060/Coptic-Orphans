@@ -48,6 +48,8 @@ class RegisterViewController: UIViewController {
     // MARK: - FUNCTIONS
     private func setupViews(){
         self.navigationItem.hidesBackButton = true
+        emailTextField.textField.isSecureTextEntry = false
+
         initTextFields(textField: emailTextField, leadingImageName: "person", placeholder: "Email", isPassword: false)
         initTextFields(textField: passwordTextField, leadingImageName: "lock", placeholder: "Password", isPassword: true)
         initTextFields(textField: confirmPasswordTextField, leadingImageName: "lock", placeholder: "Confirm Password", isPassword: true)
@@ -67,6 +69,12 @@ class RegisterViewController: UIViewController {
         btnFaceBookOutlet.layer.cornerRadius = btnGoogleOutlet.frame.width/2
     }
     
+    private func controlBtns(isEnabled: Bool){
+        btnSignUpOutlet.isEnabled = isEnabled
+        btnGoogleOutlet.isEnabled = isEnabled
+        btnFaceBookOutlet.isEnabled = isEnabled
+    }
+    
     
     // MARK: - BUTTONS
     @IBAction func btnSignUp(_ sender: Any) {
@@ -83,16 +91,26 @@ class RegisterViewController: UIViewController {
         }
         
         confirmPasswordErrorMessageText.isHidden = true
+
+        guard emailTextField.textField.text?.isValidEmail() ?? false else {
+            emailErrorMessageText.isHidden = false
+            return
+        }
         
+        controlBtns(isEnabled: false)
+        emailErrorMessageText.isHidden = true
+
         viewModel?.input.registerButtonTriggered.send((emailTextField.textField.text,passwordTextField.textField.text))
     }
     
     
     @IBAction func btnGoogle(_ sender: Any) {
+        controlBtns(isEnabled: false)
         viewModel?.input.registerUsingGoogleButtonTriggered.send()
     }
     
     @IBAction func btnFaceBook(_ sender: Any) {
+        controlBtns(isEnabled: false)
         viewModel?.input.registerUsingFaceBookButtonTriggered.send()
     }
     
@@ -118,6 +136,7 @@ private extension RegisterViewController {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] message in
                 guard let self else { return }
+                controlBtns(isEnabled: true)
                 self.showToast(message: message)
             }
             .store(in: &cancellables)
@@ -128,12 +147,9 @@ private extension RegisterViewController {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] message in
                 guard let self else { return }
-                btnSignUpOutlet.isEnabled = false
-                btnGoogleOutlet.isEnabled = false
-                btnFaceBookOutlet.isEnabled = false
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2){ [weak self] in
-                    self?.viewModel?.input.navToHomeButtonTriggered.send()
-                }
+                UserDefaults.standard.set(true, forKey: "isLoggedIn")
+                controlBtns(isEnabled: true)
+                viewModel?.input.navToHomeButtonTriggered.send()
             }
             .store(in: &cancellables)
     }

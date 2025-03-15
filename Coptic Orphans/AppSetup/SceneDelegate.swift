@@ -26,8 +26,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         let navigationController = UINavigationController()
         let coordinator = AppCoordinator(router: AppRouter(navigationController: navigationController))
-        coordinator.displayHomeScreen()
         
+        if UserDefaults.standard.bool(forKey: "isLoggedIn"){
+            coordinator.displayHomeScreen()
+        }else{
+            coordinator.displayLoginScreen()
+        }
         window?.rootViewController = navigationController
         window?.makeKeyAndVisible()
     }

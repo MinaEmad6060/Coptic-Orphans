@@ -27,14 +27,14 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="loginLogo" translatesAutoresizingMaskIntoConstraints="NO" id="jk1-Qs-9CJ">
-                    <rect key="frame" x="71.666666666666686" y="91" width="250" height="200"/>
+                    <rect key="frame" x="71.666666666666686" y="83" width="250" height="200"/>
                     <constraints>
                         <constraint firstAttribute="width" constant="250" id="nFg-hZ-Kin"/>
                         <constraint firstAttribute="height" constant="200" id="yDI-Ia-Z8k"/>
                     </constraints>
                 </imageView>
                 <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="TeO-2g-qJB">
-                    <rect key="frame" x="16" y="323" width="361" height="334.33333333333326"/>
+                    <rect key="frame" x="16" y="315" width="361" height="334.33333333333326"/>
                     <subviews>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="glk-Pu-Fhj" customClass="CustomTextField" customModule="Coptic_Orphans" customModuleProvider="target">
                             <rect key="frame" x="0.0" y="0.0" width="361" height="56"/>
@@ -137,7 +137,7 @@
             <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>
             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
             <constraints>
-                <constraint firstItem="jk1-Qs-9CJ" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" constant="32" id="1M5-TY-vNh"/>
+                <constraint firstItem="jk1-Qs-9CJ" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" constant="24" id="1M5-TY-vNh"/>
                 <constraint firstItem="jk1-Qs-9CJ" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="5Gd-j9-5Ou"/>
                 <constraint firstItem="fnl-2z-Ty3" firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="TeO-2g-qJB" secondAttribute="bottom" constant="16" id="Krq-Zb-2sb"/>
                 <constraint firstItem="TeO-2g-qJB" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" constant="16" id="OCx-2z-ndr"/>

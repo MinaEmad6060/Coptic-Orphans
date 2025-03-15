@@ -45,6 +45,7 @@ class LoginViewController: UIViewController {
     
     // MARK: - FUNCTIONS
     private func setupViews(){
+        emailTextField.textField.isSecureTextEntry = false
         initTextFields(textField: emailTextField, leadingImageName: "person", placeholder: "Email", isPassword: false)
         initTextFields(textField: passwordTextField, leadingImageName: "lock", placeholder: "Password", isPassword: true)
         initBtns()
@@ -63,22 +64,38 @@ class LoginViewController: UIViewController {
         btnFaceBookOutlet.layer.cornerRadius = btnGoogleOutlet.frame.width/2
     }
 
+    private func controlBtns(isEnabled: Bool){
+        btnSignInOutlet.isEnabled = isEnabled
+        btnGoogleOutlet.isEnabled = isEnabled
+        btnFaceBookOutlet.isEnabled = isEnabled
+    }
     
-    
+   
     // MARK: - BUTTONS
     @IBAction func btnSignIn(_ sender: Any) {
         guard !emailTextField.textField.text!.isEmpty, !passwordTextField.textField.text!.isEmpty else {
             showToast(message: "Please fill all fields")
             return
         }
+        
+        guard emailTextField.textField.text?.isValidEmail() ?? false else {
+            emailErrorMessageText.isHidden = false
+            return
+        }
+        
+        emailErrorMessageText.isHidden = true
+        controlBtns(isEnabled: false)
+        
         viewModel?.input.loginButtonTriggered.send((emailTextField.textField.text, passwordTextField.textField.text))
     }
     
     @IBAction func btnGoogle(_ sender: Any) {
+        controlBtns(isEnabled: false)
         viewModel?.input.loginUsingGoogleButtonTriggered.send()
     }
     
     @IBAction func btnFaceBook(_ sender: Any) {
+        controlBtns(isEnabled: false)
         viewModel?.input.loginUsingFaceBookButtonTriggered.send()
     }
 
@@ -100,6 +117,7 @@ private extension LoginViewController {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] message in
                 guard let self else { return }
+                controlBtns(isEnabled: true)
                 self.showToast(message: message)
             }
             .store(in: &cancellables)
@@ -110,12 +128,9 @@ private extension LoginViewController {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] message in
                 guard let self else { return }
-                btnSignInOutlet.isEnabled = false
-                btnGoogleOutlet.isEnabled = false
-                btnFaceBookOutlet.isEnabled = false
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2){ [weak self] in
-                    self?.viewModel?.input.navToHomeButtonTriggered.send()
-                }
+                UserDefaults.standard.set(true, forKey: "isLoggedIn")
+                controlBtns(isEnabled: true)
+                viewModel?.input.navToHomeButtonTriggered.send()
             }
             .store(in: &cancellables)
     }

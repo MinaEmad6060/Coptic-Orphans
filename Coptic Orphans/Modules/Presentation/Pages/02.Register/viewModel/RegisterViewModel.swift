@@ -17,14 +17,10 @@ import FBSDKLoginKit
 
 //MARK: - PROTOCOL
 protocol RegisterViewModelProtocol{
-//    var user: UserDomain? { get set }
-    
     var output: RegisterViewModelOutput { get }
     var input: RegisterViewModelInput { get }
 
     func signUp(email: String, password: String)
-
-//    func getUsers()
 }
 
 //MARK: - ViewModel-Output
@@ -48,19 +44,15 @@ struct RegisterViewModelInput {
 class RegisterViewModel: RegisterViewModelProtocol {
     
     private let coordinator: AppCoordinatorProtocol
-    private var useCase: RegisterUseCaseProtocol
     private var cancellables = Set<AnyCancellable>()
     
-
     var output: RegisterViewModelOutput
     var input: RegisterViewModelInput
     
     init(coordinator: AppCoordinatorProtocol,
-         useCase: RegisterUseCaseProtocol,
          output: RegisterViewModelOutput = RegisterViewModelOutput(),
          input: RegisterViewModelInput = RegisterViewModelInput()) {
         self.coordinator = coordinator
-        self.useCase = useCase
         self.output = output
         self.input = input
         configureInputObservers()
@@ -79,6 +71,7 @@ private extension RegisterViewModel {
             }
             .store(in: &cancellables)
         
+        
         input.registerUsingGoogleButtonTriggered
             .sink { [weak self] in
                 guard let self else { return }
@@ -86,12 +79,14 @@ private extension RegisterViewModel {
             }
             .store(in: &cancellables)
         
+        
         input.registerUsingFaceBookButtonTriggered
             .sink { [weak self] in
                 guard let self else { return }
-                registerWithFacebook()
+                signUpWithFacebook()
             }
             .store(in: &cancellables)
+        
         
         input.navToHomeButtonTriggered
             .sink { [weak self]in
@@ -99,6 +94,7 @@ private extension RegisterViewModel {
                 coordinator.displayHomeScreen()
             }
             .store(in: &cancellables)
+        
         
         input.loginButtonTriggered
             .sink { [weak self] in
@@ -125,7 +121,7 @@ extension RegisterViewModel {
             do {
                 let returnedUserData = try await AuthenticationManager.shared.createUser(email: email, password: password)
                 coordinator.hideLoader()
-                output.showToast.send("Your account has been created successfully!")
+//                output.showToast.send("Your account has been created successfully!")
                 output.reloadView.send()
                 print(returnedUserData)
             } catch let error as NSError {
@@ -163,7 +159,7 @@ extension RegisterViewModel {
         GIDSignIn.sharedInstance.signIn(withPresenting: rootViewController) { signInResult, error in
             guard let result = signInResult, error == nil else {
                 self.coordinator.hideLoader()
-                self.output.showToast.send("Google Sign-In failed: \(error?.localizedDescription ?? "Unknown error")")
+                self.output.showToast.send("Google Sign-Up failed: \(error?.localizedDescription ?? "Unknown error")")
                 return
             }
 
@@ -179,9 +175,9 @@ extension RegisterViewModel {
                 do {
                     let authResult = try await Auth.auth().signIn(with: credential)
                     self.coordinator.hideLoader()
-                    self.output.showToast.send("Google Sign-In successful!")
+//                    self.output.showToast.send("Google Sign-Up successful!")
                     self.output.reloadView.send()
-                    print("User signed in: \(authResult.user.email ?? "No email")")
+                    print("User signed up: \(authResult.user.email ?? "No email")")
                 } catch {
                     self.coordinator.hideLoader()
                     self.output.showToast.send("Authentication failed: \(error.localizedDescription)")
@@ -191,13 +187,13 @@ extension RegisterViewModel {
     }
     
     // MARK: - Facebook Sign-In
-    func registerWithFacebook() {
+    func signUpWithFacebook() {
         guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
               let rootVC = scene.windows.first?.rootViewController else { return }
 
         Task {
             do {
-                let user = try await AuthenticationManager.shared.signInWithFacebook(rootViewController: rootVC)
+                let user = try await AuthenticationManager.shared.signUpWithFacebook(rootViewController: rootVC)
                 output.showToast.send("Registered as \(user.email ?? "")")
                 output.reloadView.send()
             } catch {

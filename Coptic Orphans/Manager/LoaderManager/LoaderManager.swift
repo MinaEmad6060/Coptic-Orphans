@@ -31,8 +31,10 @@ class LoaderManager {
     }
     
     func startLoading() {
-        guard let window = UIApplication.shared.windows.first(where: { $0.isKeyWindow }) else { return }
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let window = windowScene.windows.first(where: { $0.isKeyWindow }) else { return }
 
+        // Remove existing indicators to avoid duplicates
         for subview in window.subviews {
             if let _ = subview as? NVActivityIndicatorView {
                 subview.removeFromSuperview()
@@ -40,11 +42,13 @@ class LoaderManager {
                 subview.removeFromSuperview()
             }
         }
-        
+
+        // Add overlay if needed
         if shouldShowOverlay {
             window.addSubview(overlayView)
         }
 
+        // Add background and indicator
         window.addSubview(backgroundView)
         backgroundView.center = CGPoint(x: UIScreen.main.bounds.midX, y: UIScreen.main.bounds.midY)
 
@@ -53,6 +57,7 @@ class LoaderManager {
 
         indicator.startAnimating()
     }
+
     
     func stopLoading() {
         DispatchQueue.main.async {

@@ -88,7 +88,6 @@ class HomeViewController: UIViewController {
         }
 
         isSearching = true
-        
         filteredRepositories = self.repositories.filter { repo in
             return repo.name?.lowercased().contains(text) ?? false
         }
@@ -130,11 +129,11 @@ extension HomeViewController: UITableViewDataSource, UITableViewDelegate{
    
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-            if indexPath.row == repositories.count - 5 {
-                currentPage += 1
-                viewModel?.getAllPublicRepositories(page: currentPage)
-            }
+        if indexPath.row == repositories.count - 5 {
+            currentPage += 1
+            viewModel?.getAllPublicRepositories(page: currentPage)
         }
+    }
 
 }
 

@@ -24,13 +24,13 @@ final class AppCoordinator: AppCoordinatorProtocol {
     }
     
     func displayLoginScreen() {
-        let viewModel = LoginViewModel(coordinator: self, useCase: loginUseCase())
+        let viewModel = LoginViewModel(coordinator: self)
         let viewController = LoginViewController(viewModel: viewModel)
-        self.router.push(viewController, animated: true)
+        self.router.setRootViewController(viewController, animated: true)
     }
     
     func displayRegisterScreen() {
-        let viewModel = RegisterViewModel(coordinator: self, useCase: registerUseCase())
+        let viewModel = RegisterViewModel(coordinator: self)
         let viewController = RegisterViewController(viewModel: viewModel)
         self.router.push(viewController, animated: true)
     }
@@ -47,18 +47,6 @@ final class AppCoordinator: AppCoordinatorProtocol {
 //MARK: - Init-UseCase
 extension AppCoordinator {
     
-    private func loginUseCase() -> LoginUseCaseProtocol {
-        let repository = AppRepository(dependencies: AppRepositoryDependencies(dataSource: AppRemoteDataSource()))
-        let useCase = LoginUseCase(dependencies: LoginUseCaseDependencies(repository: repository))
-        return useCase
-    }
-     
-    private func registerUseCase() -> RegisterUseCaseProtocol {
-        let repository = AppRepository(dependencies: AppRepositoryDependencies(dataSource: AppRemoteDataSource()))
-        let useCase = RegisterUseCase(dependencies: RegisterUseCaseDependencies(repository: repository))
-        return useCase
-    }
-     
     private func homeUseCase() -> HomeUseCaseProtocol {
         let repository = AppRepository(dependencies: AppRepositoryDependencies(dataSource: AppRemoteDataSource()))
         let useCase = HomeUseCase(dependencies: HomeUseCaseDependencies(repository: repository))

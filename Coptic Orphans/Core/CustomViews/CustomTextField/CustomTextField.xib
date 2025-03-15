@@ -13,7 +13,7 @@
             <connections>
                 <outlet property="leadingImage" destination="Jq3-om-tLX" id="jLT-ay-B01"/>
                 <outlet property="textField" destination="6gB-7l-clz" id="o3G-y3-Nbe"/>
-                <outlet property="trailingImage" destination="9CR-5M-iSv" id="k5H-Dw-Wi4"/>
+                <outlet property="trailingBtn" destination="lRM-gd-j3c" id="LBo-oY-IGe"/>
             </connections>
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
@@ -36,17 +36,22 @@
                             <rect key="frame" x="52" y="8" width="293" height="40"/>
                             <subviews>
                                 <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Email" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="6gB-7l-clz">
-                                    <rect key="frame" x="0.0" y="0.0" width="261" height="40"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="245" height="40"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                     <textInputTraits key="textInputTraits"/>
                                 </textField>
-                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="eye.fill" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="9CR-5M-iSv">
-                                    <rect key="frame" x="269" y="2" width="24" height="36"/>
-                                    <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lRM-gd-j3c">
+                                    <rect key="frame" x="253" y="0.0" width="40" height="40"/>
                                     <constraints>
-                                        <constraint firstAttribute="width" constant="24" id="Uce-RM-GBF"/>
+                                        <constraint firstAttribute="width" constant="40" id="BSP-8e-myb"/>
                                     </constraints>
-                                </imageView>
+                                    <color key="tintColor" name="main"/>
+                                    <state key="normal" title="Button"/>
+                                    <buttonConfiguration key="configuration" style="plain" image="eye.fill" catalog="system" title=""/>
+                                    <connections>
+                                        <action selector="btnEye:" destination="-1" eventType="touchUpInside" id="duy-K8-gHw"/>
+                                    </connections>
+                                </button>
                             </subviews>
                         </stackView>
                     </subviews>
@@ -79,8 +84,11 @@
     <resources>
         <image name="eye.fill" catalog="system" width="128" height="80"/>
         <image name="person" catalog="system" width="128" height="121"/>
+        <namedColor name="main">
+            <color red="0.17599999904632568" green="0.20800000429153442" blue="0.5220000147819519" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+        </namedColor>
         <namedColor name="secondary">
-            <color red="0.46666666870000001" green="0.47058826679999999" blue="0.48235297199999999" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+            <color red="0.46700000762939453" green="0.47099998593330383" blue="0.48199999332427979" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
         </namedColor>
     </resources>
 </document>

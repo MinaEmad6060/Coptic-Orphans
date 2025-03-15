@@ -1,27 +1,22 @@
-//
-//  CustomTextField.swift
-//  Coptic Orphans
-//
-//  Created by Mina Emad on 14/03/2025.
-//
-
-
 import UIKit
+import Combine
 
-
-class CustomTextField: UIView{
+class CustomTextField: UIView, UITextFieldDelegate {
 
     // MARK: - OUTLETS
     @IBOutlet weak var leadingImage: UIImageView!
     @IBOutlet weak var textField: UITextField!
-    @IBOutlet weak var trailingImage: UIImageView!
+    @IBOutlet weak var trailingBtn: UIButton!
     
-    
-    //MARK: - INITIALIZER
+    // MARK: - Properties
+    private let defaultBorderColor: UIColor = .secondary
+    private let activeBorderColor: UIColor = .main
+    private var isPassSecure = false
+
+    // MARK: - INITIALIZER
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.commonInit()
-
     }
 
     required init?(coder: NSCoder) {
@@ -34,16 +29,40 @@ class CustomTextField: UIView{
         let bundle = Bundle(for: CustomTextField.self)
         if let viewToAdd = bundle.loadNibNamed("CustomTextField", owner: self, options: nil)?.first as? UIView {
             addSubview(viewToAdd)
-            viewToAdd.frame = self.bounds  // Ensure it takes the full size
+            viewToAdd.frame = self.bounds
             viewToAdd.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         }
+        
+        textField.isSecureTextEntry = true
+        textField.delegate = self
     }
 
-    
     func setupView(leadingImageName: String, placeholder: String, isPassword: Bool = false) {
         leadingImage.image = UIImage(systemName: leadingImageName)
-        trailingImage.isHidden = !isPassword
+        trailingBtn.isHidden = !isPassword
         textField.placeholder = placeholder
     }
+
+    // MARK: - UITextFieldDelegate Methods
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        layer.borderWidth = 1.5
+        layer.borderColor = activeBorderColor.cgColor
+    }
+
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        layer.borderWidth = 0.3
+        layer.borderColor = defaultBorderColor.cgColor
+    }
     
+    // MARK: - Handling-Button
+    @IBAction func btnEye(_ sender: Any) {
+        textField.isSecureTextEntry.toggle()
+        if self.isPassSecure {
+            self.isPassSecure = false
+            trailingBtn.setImage(UIImage(systemName: "eye.fill"), for: .normal)
+        }else{
+            self.isPassSecure = true
+            trailingBtn.setImage(UIImage(systemName: "eye.slash.fill"), for: .normal)
+        }
+    }
 }

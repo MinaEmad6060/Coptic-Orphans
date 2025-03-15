@@ -29,14 +29,14 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="loginLogo" translatesAutoresizingMaskIntoConstraints="NO" id="ANl-Cu-Vjr">
-                    <rect key="frame" x="71.666666666666686" y="91" width="250" height="200"/>
+                    <rect key="frame" x="71.666666666666686" y="83" width="250" height="200"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="200" id="MEm-KY-l4c"/>
                         <constraint firstAttribute="width" constant="250" id="yA2-b0-C7t"/>
                     </constraints>
                 </imageView>
                 <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="yux-Xg-PPf">
-                    <rect key="frame" x="16" y="311" width="361" height="410.33333333333326"/>
+                    <rect key="frame" x="16" y="303" width="361" height="410.33333333333326"/>
                     <subviews>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="k1a-ua-46m" customClass="CustomTextField" customModule="Coptic_Orphans" customModuleProvider="target">
                             <rect key="frame" x="0.0" y="0.0" width="361" height="56"/>
@@ -163,7 +163,7 @@
                 <constraint firstItem="yux-Xg-PPf" firstAttribute="leading" secondItem="nhE-hY-TiS" secondAttribute="leading" constant="16" id="I2F-Wi-nGJ"/>
                 <constraint firstItem="nhE-hY-TiS" firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="yux-Xg-PPf" secondAttribute="bottom" constant="16" id="mCn-bk-cn1"/>
                 <constraint firstItem="ANl-Cu-Vjr" firstAttribute="centerX" secondItem="exZ-80-IRF" secondAttribute="centerX" id="mXJ-ZP-FNX"/>
-                <constraint firstItem="ANl-Cu-Vjr" firstAttribute="top" secondItem="nhE-hY-TiS" secondAttribute="top" constant="32" id="uIy-lX-nNn"/>
+                <constraint firstItem="ANl-Cu-Vjr" firstAttribute="top" secondItem="nhE-hY-TiS" secondAttribute="top" constant="24" id="uIy-lX-nNn"/>
             </constraints>
             <point key="canvasLocation" x="32.824427480916029" y="-11.267605633802818"/>
         </view>

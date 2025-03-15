@@ -8,6 +8,9 @@
 
 import Foundation
 import Combine
+import FirebaseAuth
+import GoogleSignIn
+import FBSDKLoginKit
 
 //MARK: - PROTOCOL
 protocol HomeViewModelProtocol{
@@ -60,7 +63,14 @@ extension HomeViewModel {
         input.logoutButtonTriggered
             .sink { [weak self] in
                 guard let self else { return }
-                coordinator.router.pop(animated: true)
+                guard let rootViewController = UIApplication.shared.connectedScenes
+                    .compactMap({ ($0 as? UIWindowScene)?.keyWindow?.rootViewController }).first else {
+                    print("Unable to get root view controller")
+                    return
+                }
+                rootViewController.showAlert(title: "Logout", message: "Are you sure you want to logout?"){
+                    self.logOutUser()
+                }
             }
             .store(in: &cancellables)
     }
@@ -85,6 +95,30 @@ extension HomeViewModel {
                 self.output.reloadView.send(repositories)
             }
             .store(in: &cancellables)
+    }
+    
+    func logOutUser() {
+        do {
+            try Auth.auth().signOut()
+            print("✅ Firebase logout successful")
+            
+            // Google logout
+            if let _ = GIDSignIn.sharedInstance.currentUser {
+                GIDSignIn.sharedInstance.signOut()
+                print("✅ Google logout successful")
+            }
+
+            // Facebook logout
+            let loginManager = LoginManager()
+            loginManager.logOut()
+            print("✅ Facebook logout successful")
+
+            UserDefaults.standard.set(false, forKey: "isLoggedIn")
+            coordinator.displayLoginScreen()
+            
+        } catch let error {
+            print("❌ Error logging out: \(error.localizedDescription)")
+        }
     }
     
 }

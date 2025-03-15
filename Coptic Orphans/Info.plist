@@ -2,62 +2,67 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>CFBundleURLTypes</key>
-	<array>
-		<dict>
-			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>com.googleusercontent.apps.334394649133-is70g0sms83fkkgj8earplhknts88t3l</string>
-			</array>
-		</dict>
-	</array>
-	<key>LSApplicationQueriesSchemes</key>
-	<array>
-		<string>google</string>
-		<string>googlechrome</string>
-	</array>
-	<key>UIApplicationSceneManifest</key>
-	<dict>
-		<key>UIApplicationSupportsMultipleScenes</key>
-		<false/>
-		<key>UISceneConfigurations</key>
-		<dict>
-			<key>UIWindowSceneSessionRoleApplication</key>
-			<array>
-				<dict>
-					<key>UISceneConfigurationName</key>
-					<string>Default Configuration</string>
-					<key>UISceneDelegateClassName</key>
-					<string>$(PRODUCT_MODULE_NAME).SceneDelegate</string>
-					<key>UISceneStoryboardFile</key>
-					<string>Main</string>
-				</dict>
-			</array>
-		</dict>
-	</dict>
     <key>CFBundleURLTypes</key>
     <array>
-      <dict>
-      <key>CFBundleURLSchemes</key>
-      <array>
-        <string>fb2803702896501068</string>
-      </array>
-      </dict>
+        <dict>
+            <key>CFBundleTypeRole</key>
+            <string>Editor</string>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <!-- Google Sign-In URL Scheme -->
+                <string>com.googleusercontent.apps.334394649133-is70g0sms83fkkgj8earplhknts88t3l</string>
+                <!-- Facebook Login URL Scheme -->
+                <string>fb2803702896501068</string>
+            </array>
+        </dict>
     </array>
+
+    <key>LSApplicationQueriesSchemes</key>
+    <array>
+        <!-- Google Sign-In Queries -->
+        <string>google</string>
+        <string>googlechrome</string>
+        <string>googleauth</string>
+        <string>googledrive</string>
+        
+        <!-- Facebook Login Queries -->
+        <string>fbapi</string>
+        <string>fb-messenger-share-api</string>
+    </array>
+
+    <!-- Google Sign-In Config -->
+    <key>GIDClientID</key>
+    <string>334394649133-is70g0sms83fkkgj8earplhknts88t3l.apps.googleusercontent.com</string>
+    <key>GIDReversedClientID</key>
+    <string>com.googleusercontent.apps.334394649133-is70g0sms83fkkgj8earplhknts88t3l</string>
+
+    <!-- Facebook Login Config -->
     <key>FacebookAppID</key>
     <string>2803702896501068</string>
     <key>FacebookClientToken</key>
     <string>CLIENT-TOKEN</string>
     <key>FacebookDisplayName</key>
     <string>APP-NAME</string>
-    
-    
-    <key>LSApplicationQueriesSchemes</key>
-    <array>
-      <string>fbapi</string>
-      <string>fb-messenger-share-api</string>
-    </array>
+
+    <!-- Scene Configuration -->
+    <key>UIApplicationSceneManifest</key>
+    <dict>
+        <key>UIApplicationSupportsMultipleScenes</key>
+        <false/>
+        <key>UISceneConfigurations</key>
+        <dict>
+            <key>UIWindowSceneSessionRoleApplication</key>
+            <array>
+                <dict>
+                    <key>UISceneConfigurationName</key>
+                    <string>Default Configuration</string>
+                    <key>UISceneDelegateClassName</key>
+                    <string>$(PRODUCT_MODULE_NAME).SceneDelegate</string>
+                    <key>UISceneStoryboardFile</key>
+                    <string>Main</string>
+                </dict>
+            </array>
+        </dict>
+    </dict>
 </dict>
 </plist>

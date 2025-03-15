@@ -11,9 +11,10 @@ import UIKit
 protocol Router {
     var navigationController: UINavigationController { get }
     
-    func present(_ viewController: UIViewController)
     func push(_ viewController: UIViewController, animated: Bool)
     func pop(animated: Bool)
+    func setRootViewController(_ viewController: UIViewController, animated: Bool)
+
 }
 
 
@@ -28,11 +29,6 @@ final class AppRouter {
 
 extension AppRouter: Router {
     
-    func present(_ viewController: UIViewController) {
-        navigationController.present(viewController, animated: true)
-    }
-    
-    
     func push(_ viewController: UIViewController, animated: Bool = true) {
         navigationController.pushViewController(viewController, animated: animated)
     }
@@ -40,5 +36,9 @@ extension AppRouter: Router {
     func pop(animated: Bool) {
         navigationController.popViewController(animated: animated)
     }
+    
+    func setRootViewController(_ viewController: UIViewController, animated: Bool) {
+            navigationController.setViewControllers([viewController], animated: animated)
+        }
  
 }
