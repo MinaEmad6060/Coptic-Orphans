@@ -100,24 +100,24 @@ extension HomeViewModel {
     func logOutUser() {
         do {
             try Auth.auth().signOut()
-            print("✅ Firebase logout successful")
+            print("Firebase logout successful")
             
             // Google logout
             if let _ = GIDSignIn.sharedInstance.currentUser {
                 GIDSignIn.sharedInstance.signOut()
-                print("✅ Google logout successful")
+                print("Google logout successful")
             }
 
             // Facebook logout
             let loginManager = LoginManager()
             loginManager.logOut()
-            print("✅ Facebook logout successful")
+            print("Facebook logout successful")
 
             UserDefaults.standard.set(false, forKey: "isLoggedIn")
             coordinator.displayLoginScreen()
             
         } catch let error {
-            print("❌ Error logging out: \(error.localizedDescription)")
+            print("Error logging out: \(error.localizedDescription)")
         }
     }
     

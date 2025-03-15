@@ -85,21 +85,19 @@ class RegisterViewController: UIViewController {
             return
         }
         
-        guard passwordTextField.textField.text == confirmPasswordTextField.textField.text else {
-            confirmPasswordErrorMessageText.isHidden = false
-            return
-        }
-        
-        confirmPasswordErrorMessageText.isHidden = true
-
         guard emailTextField.textField.text?.isValidEmail() ?? false else {
             emailErrorMessageText.isHidden = false
             return
         }
+        emailErrorMessageText.isHidden = true
+        
+        guard passwordTextField.textField.text == confirmPasswordTextField.textField.text else {
+            confirmPasswordErrorMessageText.isHidden = false
+            return
+        }
+        confirmPasswordErrorMessageText.isHidden = true
         
         controlBtns(isEnabled: false)
-        emailErrorMessageText.isHidden = true
-
         viewModel?.input.registerButtonTriggered.send((emailTextField.textField.text,passwordTextField.textField.text))
     }
     

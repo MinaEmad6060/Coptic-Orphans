@@ -9,6 +9,7 @@ import UIKit
 import Toast
 
 extension UIViewController {
+    
     func showToast(message: String){
         var style = ToastStyle()
         style.backgroundColor = UIColor.gray
@@ -38,4 +39,5 @@ extension UIViewController {
         // Present the alert
         self.present(alert, animated: true, completion: nil)
     }
+    
 }

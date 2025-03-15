@@ -18,7 +18,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         initGoogleSDK()
         FirebaseApp.configure()
         ApplicationDelegate.shared.application(application, didFinishLaunchingWithOptions: launchOptions)
-
+        Settings.shared.isAutoLogAppEventsEnabled = false
+        Settings.shared.isAdvertiserIDCollectionEnabled = false
+        
         return true
     }
     

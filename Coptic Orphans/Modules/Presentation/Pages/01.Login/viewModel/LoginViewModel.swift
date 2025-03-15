@@ -14,11 +14,10 @@ import GoogleSignIn
 
 //MARK: - PROTOCOL
 protocol LoginViewModelProtocol{
- 
     var output: LoginViewModelOutput { get }
     var input: LoginViewModelInput { get }
 
-    func signIn(email: String, password: String)
+    func signInWithEmail(email: String, password: String)
 }
 
 //MARK: - ViewModel-Output
@@ -44,7 +43,6 @@ class LoginViewModel: LoginViewModelProtocol {
     private let coordinator: AppCoordinatorProtocol
     private var cancellables = Set<AnyCancellable>()
     
-
     var output: LoginViewModelOutput
     var input: LoginViewModelInput
     
@@ -66,7 +64,7 @@ extension LoginViewModel {
         input.loginButtonTriggered
             .sink { [weak self] (email, password) in
                 guard let self else { return }
-                signIn(email: email ?? "", password: password ?? "")
+                signInWithEmail(email: email ?? "", password: password ?? "")
             }
             .store(in: &cancellables)
         
@@ -82,7 +80,7 @@ extension LoginViewModel {
         input.loginUsingFaceBookButtonTriggered
             .sink { [weak self]in
                 guard let self else { return }
-
+                signInWithFacebook()
             }
             .store(in: &cancellables)
         
@@ -107,7 +105,8 @@ extension LoginViewModel {
 //MARK: - CALLS
 extension LoginViewModel {
     
-    func signIn(email: String, password: String) {
+    // MARK: - Email & Password Sign-In
+    func signInWithEmail(email: String, password: String) {
         coordinator.showLoader()
         guard !email.isEmpty, !password.isEmpty else {
             print("No email or password found.")
@@ -117,9 +116,8 @@ extension LoginViewModel {
         
         Task {
             do {
-                let returnedUserData = try await AuthenticationManager.shared.signIn(email: email, password: password)
+                let returnedUserData = try await AuthenticationManager.shared.signInWithEmail(email: email, password: password)
                 coordinator.hideLoader()
-//                output.showToast.send("Sign-in successful")
                 output.reloadView.send()
                 print(returnedUserData)
             } catch let error as NSError {
@@ -135,6 +133,7 @@ extension LoginViewModel {
         }
     }
 
+    // MARK: - Google Sign-In
     func signInWithGoogle() {
         guard let rootViewController = UIApplication.shared.connectedScenes
             .compactMap({ ($0 as? UIWindowScene)?.keyWindow?.rootViewController }).first else {
@@ -143,32 +142,39 @@ extension LoginViewModel {
         }
 
         coordinator.showLoader()
-
-        GIDSignIn.sharedInstance.signIn(withPresenting: rootViewController) { signInResult, error in
-            guard let result = signInResult, error == nil else {
-                self.coordinator.hideLoader()
-                return
+        
+        Task {
+            do {
+                let user = try await AuthenticationManager.shared.signInWithGoogle(rootViewController: rootViewController)
+                coordinator.hideLoader()
+                output.reloadView.send()
+                print("User signed in: \(user.email ?? "No email")")
+            } catch {
+                coordinator.hideLoader()
+                output.showToast.send("Authentication failed: \(error.localizedDescription)")
             }
+        }
+    }
+    
+    // MARK: - Facebook Sign-In
+    func signInWithFacebook() {
+        guard let rootViewController = UIApplication.shared.connectedScenes
+            .compactMap({ ($0 as? UIWindowScene)?.keyWindow?.rootViewController }).first else {
+            print("Unable to get root view controller")
+            return
+        }
 
-            guard let idToken = result.user.idToken?.tokenString else {
-                self.coordinator.hideLoader()
-                self.output.showToast.send("Failed to retrieve Google ID token.")
-                return
-            }
-
-            let credential = GoogleAuthProvider.credential(withIDToken: idToken, accessToken: result.user.accessToken.tokenString)
-
-            Task {
-                do {
-                    let authResult = try await Auth.auth().signIn(with: credential)
-                    self.coordinator.hideLoader()
-//                    self.output.showToast.send("Google Sign-In successful!")
-                    self.output.reloadView.send()
-                    print("User signed in: \(authResult.user.email ?? "No email")")
-                } catch {
-                    self.coordinator.hideLoader()
-                    self.output.showToast.send("Authentication failed: \(error.localizedDescription)")
-                }
+        coordinator.showLoader()
+        
+        Task {
+            do {
+                let user = try await AuthenticationManager.shared.signInWithFacebook(rootViewController: rootViewController)
+                coordinator.hideLoader()
+                output.reloadView.send()
+                print("User signed in: \(user.email ?? "No email")")
+            } catch {
+                coordinator.hideLoader()
+                output.showToast.send("Authentication failed: \(error.localizedDescription)")
             }
         }
     }

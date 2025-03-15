@@ -38,7 +38,7 @@ extension AppRouter: Router {
     }
     
     func setRootViewController(_ viewController: UIViewController, animated: Bool) {
-            navigationController.setViewControllers([viewController], animated: animated)
-        }
+        navigationController.setViewControllers([viewController], animated: animated)
+    }
  
 }

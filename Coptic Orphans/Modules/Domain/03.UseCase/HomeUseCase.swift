@@ -15,10 +15,13 @@ protocol HomeUseCaseProtocol {
 
 
 final class HomeUseCase {
+    
     let repository: AppRepositoryProtocol
+    
     init(dependencies: HomeUseCaseDependanciesProtocol) {
         self.repository = dependencies.repository
     }
+    
 }
 
 extension HomeUseCase: HomeUseCaseProtocol {

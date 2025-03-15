@@ -20,7 +20,7 @@ protocol RegisterViewModelProtocol{
     var output: RegisterViewModelOutput { get }
     var input: RegisterViewModelInput { get }
 
-    func signUp(email: String, password: String)
+    func signUpWithEmail(email: String, password: String)
 }
 
 //MARK: - ViewModel-Output
@@ -67,7 +67,7 @@ private extension RegisterViewModel {
         input.registerButtonTriggered
             .sink { [weak self] (email, password) in
                 guard let self else { return }
-                signUp(email: email ?? "", password: password ?? "")
+                signUpWithEmail(email: email ?? "", password: password ?? "")
             }
             .store(in: &cancellables)
         
@@ -108,7 +108,8 @@ private extension RegisterViewModel {
 //MARK: - CALLS
 extension RegisterViewModel {
     
-    func signUp(email: String, password: String) {
+    // MARK: - Email & Password Sign-Up
+    func signUpWithEmail(email: String, password: String) {
         coordinator.showLoader()
         
         guard !email.isEmpty, !password.isEmpty else {
@@ -119,9 +120,8 @@ extension RegisterViewModel {
         
         Task {
             do {
-                let returnedUserData = try await AuthenticationManager.shared.createUser(email: email, password: password)
+                let returnedUserData = try await AuthenticationManager.shared.signUpWithEmail(email: email, password: password)
                 coordinator.hideLoader()
-//                output.showToast.send("Your account has been created successfully!")
                 output.reloadView.send()
                 print(returnedUserData)
             } catch let error as NSError {
@@ -147,46 +147,26 @@ extension RegisterViewModel {
         }
     }
     
+    // MARK: - Google Sign-Up
     func signUpWithGoogle() {
-        guard let rootViewController = UIApplication.shared.connectedScenes
-            .compactMap({ ($0 as? UIWindowScene)?.keyWindow?.rootViewController }).first else {
-            print("Unable to get root view controller")
-            return
-        }
-
-        coordinator.showLoader()
-
-        GIDSignIn.sharedInstance.signIn(withPresenting: rootViewController) { signInResult, error in
-            guard let result = signInResult, error == nil else {
-                self.coordinator.hideLoader()
-                self.output.showToast.send("Google Sign-Up failed: \(error?.localizedDescription ?? "Unknown error")")
-                return
-            }
-
-            guard let idToken = result.user.idToken?.tokenString else {
-                self.coordinator.hideLoader()
-                self.output.showToast.send("Failed to retrieve Google ID token.")
-                return
-            }
-
-            let credential = GoogleAuthProvider.credential(withIDToken: idToken, accessToken: result.user.accessToken.tokenString)
+           guard let rootViewController = UIApplication.shared.connectedScenes
+               .compactMap({ ($0 as? UIWindowScene)?.keyWindow?.rootViewController }).first else {
+               print("Unable to get root view controller")
+               return
+           }
 
             Task {
-                do {
-                    let authResult = try await Auth.auth().signIn(with: credential)
-                    self.coordinator.hideLoader()
-//                    self.output.showToast.send("Google Sign-Up successful!")
-                    self.output.reloadView.send()
-                    print("User signed up: \(authResult.user.email ?? "No email")")
-                } catch {
-                    self.coordinator.hideLoader()
-                    self.output.showToast.send("Authentication failed: \(error.localizedDescription)")
-                }
-            }
-        }
-    }
+               do {
+                   let authResult = try await AuthenticationManager.shared.signUpWithGoogle(from: rootViewController)
+                   print("User signed up: \(authResult.user.email ?? "No email")")
+                   output.reloadView.send()
+               } catch {
+                   output.showToast.send("Authentication failed: \(error.localizedDescription)")
+               }
+           }
+       }
     
-    // MARK: - Facebook Sign-In
+    // MARK: - Facebook Sign-Up
     func signUpWithFacebook() {
         guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
               let rootVC = scene.windows.first?.rootViewController else { return }

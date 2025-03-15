@@ -6,10 +6,12 @@
 //
 
 extension GitRepositoryEntity {
+    
     func toDomain() -> GitRepositoryDomain {
         return GitRepositoryDomain(
             name: self.name,
             description: self.description
         )
     }
+    
 }
