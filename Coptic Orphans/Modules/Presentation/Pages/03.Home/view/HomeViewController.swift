@@ -21,8 +21,8 @@ class HomeViewController: UIViewController {
     private var cancellables = Set<AnyCancellable>()
     private var viewModel: HomeViewModelProtocol?
     
-    var repositories: [Repository] = []
-    private var filteredRepositories: [Repository] = []
+    var repositories: [GitRepositoryDomain] = []
+    private var filteredRepositories: [GitRepositoryDomain] = []
     private var isSearching = false
     var currentPage = 1
     var isFetching = false
@@ -42,17 +42,10 @@ class HomeViewController: UIViewController {
         super.viewDidLoad()
         initViewController()
         setupViews()
+        bindHomeViewModel()
     }
     
-    private func initViewController() {
-        repositoryTableView.delegate = self
-        repositoryTableView.dataSource = self
-        repositoryTableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
-
-        setupSearchBar()
-        fetchRepositories(page: currentPage)
-    }
-
+    // MARK: - Functions
     private func setupViews() {
         self.navigationItem.hidesBackButton = true
         topView.layer.cornerRadius = 16
@@ -67,28 +60,20 @@ class HomeViewController: UIViewController {
         searchBar.isTranslucent = true
     }
     
-    func fetchRepositories(page: Int) {
-        guard !isFetching else { return }
-        isFetching = true
-        
-        let url = "https://api.github.com/repositories?since=\(page * 30)"
-        
-        AF.request(url).responseDecodable(of: [Repository].self) { response in
-            switch response.result {
-            case .success(let repos):
-                if self.currentPage == 1 {
-                    self.repositories = repos
-                } else {
-                    self.repositories.append(contentsOf: repos)
-                }
-                self.repositoryTableView.reloadData()
-            case .failure(let error):
-                print("Error: \(error.localizedDescription)")
-            }
-            self.isFetching = false
-        }
+    private func initViewController() {
+        initTableView()
+        setupSearchBar()
+        getAllPublicRepositories()
     }
     
+    
+    private func getAllPublicRepositories(){
+        guard !isFetching else { return }
+        isFetching = true
+        viewModel?.getAllPublicRepositories(page: currentPage)
+    }
+   
+
     // MARK: - Setup-SearchBar
     private func setupSearchBar() {
         searchBar.delegate = self
@@ -103,8 +88,9 @@ class HomeViewController: UIViewController {
         }
 
         isSearching = true
-        filteredRepositories = repositories.filter { repo in
-            return repo.name.lowercased().contains(text)
+        
+        filteredRepositories = self.repositories.filter { repo in
+            return repo.name?.lowercased().contains(text) ?? false
         }
 
         repositoryTableView.reloadData()
@@ -116,25 +102,40 @@ class HomeViewController: UIViewController {
     }
 }
 
+
+// MARK: - Setup-TableView
 extension HomeViewController: UITableViewDataSource, UITableViewDelegate{
+    
+    private func initTableView() {
+        repositoryTableView.delegate = self
+        repositoryTableView.dataSource = self
+        repositoryTableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+    }
+    
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return isSearching ? filteredRepositories.count : repositories.count
     }
     
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+        
         let repository = isSearching ? filteredRepositories[indexPath.row] : repositories[indexPath.row]
         cell.textLabel?.text = repository.name
+        cell.selectionStyle = .none
+        
         return cell
     }
    
-    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if indexPath.row == repositories.count - 5 {
-            currentPage += 1
-            fetchRepositories(page: currentPage)
-        }
-    }
     
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+            if indexPath.row == repositories.count - 5 {
+                currentPage += 1
+                viewModel?.getAllPublicRepositories(page: currentPage)
+            }
+        }
+
 }
 
 
@@ -149,16 +150,26 @@ extension HomeViewController: UISearchBarDelegate {
 }
 
 
-struct Repository: Decodable {
-    let name: String
-    let description: String?
-    let html_url: String
+//MARK: - BINDING-VIEW-MODEL
+private extension HomeViewController {
+    func bindHomeViewModel() {
+        bindReloadView()
+    }
+     
+    func bindReloadView() {
+        viewModel?.output.reloadView
+            .receive(on: DispatchQueue.main)
+            .sink{[weak self] repos in
+                guard let self else { return }
+                if self.currentPage == 1 {
+                    self.repositories = repos
+                } else {
+                    self.repositories.append(contentsOf: repos)
+                }
+                self.repositoryTableView.reloadData()
+                self.isFetching = false
+            }
+            .store(in: &cancellables)
+    }
+    
 }
-/*
- func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-     if indexPath.row == repositories.count - 5 {
-         currentPage += 1
-         fetchRepositories(page: currentPage)
-     }
- }
- */

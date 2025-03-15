@@ -10,7 +10,7 @@ import Combine
 
 //MARK: - UseCase
 protocol HomeUseCaseProtocol {
-//    func getUsers() -> AnyPublisher<[UserDomain], NetworkError>
+    func getAllPublicRepositories(page: Int) -> AnyPublisher<[GitRepositoryDomain], NetworkError>
 }
 
 
@@ -23,14 +23,14 @@ final class HomeUseCase {
 
 extension HomeUseCase: HomeUseCaseProtocol {
     
-//    func getUsers() -> AnyPublisher<[UserDomain], NetworkError> {
-//        repository.getUsers()
-//            .map { entities in
-//                entities.map { $0.toDomain() }
-//            }
-//            .eraseToAnyPublisher()
-//    }
-//
+    func getAllPublicRepositories(page: Int) -> AnyPublisher<[GitRepositoryDomain], NetworkError>{
+     repository.getAllPublicRepositories(page: page)
+            .map { entities in
+                entities.map { $0.toDomain() }
+            }
+            .eraseToAnyPublisher()
+    }
+
 }
 
 

@@ -42,7 +42,7 @@ class RegisterViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
-        bindhomeViewModel()
+        bindRegisterViewModel()
     }
     
     // MARK: - FUNCTIONS
@@ -108,7 +108,7 @@ class RegisterViewController: UIViewController {
 
 //MARK: - BINDING-VIEW-MODEL
 private extension RegisterViewController {
-    func bindhomeViewModel() {
+    func bindRegisterViewModel() {
         bindShowToastView()
         bindReloadView()
     }

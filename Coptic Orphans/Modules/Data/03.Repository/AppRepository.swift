@@ -10,7 +10,7 @@ import Combine
 
 //MARK: - Repository
 protocol AppRepositoryProtocol {
-//    func getUsers() -> AnyPublisher<[User], NetworkError>
+    func getAllPublicRepositories(page: Int) -> AnyPublisher<[GitRepositoryEntity], NetworkError>
 }
 
 final class AppRepository {
@@ -23,10 +23,10 @@ final class AppRepository {
 
 extension AppRepository: AppRepositoryProtocol{
     
-//    func getUsers() -> AnyPublisher<[User], NetworkError> {
-//        dataSource.getUsers()
-//            .eraseToAnyPublisher()
-//    }
+    func getAllPublicRepositories(page: Int) -> AnyPublisher<[GitRepositoryEntity], NetworkError> {
+        dataSource.getAllPublicRepositories(page: page)
+            .eraseToAnyPublisher()
+    }
     
 }
 

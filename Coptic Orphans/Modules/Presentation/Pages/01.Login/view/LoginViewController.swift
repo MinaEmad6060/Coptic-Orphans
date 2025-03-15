@@ -40,7 +40,7 @@ class LoginViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
-        bindhomeViewModel()
+        bindLoginViewModel()
     }
     
     // MARK: - FUNCTIONS
@@ -90,7 +90,7 @@ class LoginViewController: UIViewController {
 
 //MARK: - BINDING-VIEW-MODEL
 private extension LoginViewController {
-    func bindhomeViewModel() {
+    func bindLoginViewModel() {
         bindShowToastView()
         bindReloadView()
     }
